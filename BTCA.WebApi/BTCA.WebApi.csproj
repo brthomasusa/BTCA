@@ -16,4 +16,9 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BTCA.Common\BTCA.Common.csproj" />
+    <ProjectReference Include="..\BTCA.DomainLayer\BTCA.DomainLayer.csproj" />
+  </ItemGroup>
+
 </Project>
