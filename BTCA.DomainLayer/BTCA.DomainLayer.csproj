@@ -2,10 +2,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BTCA.Common\BTCA.Common.csproj" />
+    <ProjectReference Include="..\BTCA.DataAccess\BTCA.DataAccess.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Content Update="NLog.config" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog.Config" Version="4.5.5" />
+  </ItemGroup>  
 
 </Project>
