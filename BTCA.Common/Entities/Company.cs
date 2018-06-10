@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,6 +26,9 @@ namespace BTCA.Common.Entities
         public virtual IList<AppUser> AppUsers { get; set; } = new List<AppUser>();  
 
         [InverseProperty(nameof(Address.Company))]      
-        public virtual IList<Address> Addresses { get; set; } = new List<Address>();       
+        public virtual IList<Address> Addresses { get; set; } = new List<Address>();   
+
+        [InverseProperty(nameof(LoadAssignment.Company))]      
+        public virtual IList<LoadAssignment> LoadAssignments { get; set; } = new List<LoadAssignment>();             
     }
 }
