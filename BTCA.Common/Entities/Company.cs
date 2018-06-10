@@ -30,5 +30,8 @@ namespace BTCA.Common.Entities
 
         [InverseProperty(nameof(LoadAssignment.Company))]      
         public virtual IList<LoadAssignment> LoadAssignments { get; set; } = new List<LoadAssignment>();             
+
+        [InverseProperty(nameof(DailyLog.Company))]      
+        public virtual IList<DailyLog> DailyLogs { get; set; } = new List<DailyLog>();         
     }
 }
