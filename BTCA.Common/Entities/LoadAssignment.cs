@@ -44,6 +44,11 @@ namespace BTCA.Common.Entities
         [Required, Display(Name = "Stops")]
         public virtual int NumberOfStops { get; set; }
 
+        public virtual DateTime SettlementDate { get; set; }
+
+        [MaxLength(4000)]
+        public virtual string Notes { get; set; }
+
         public virtual int CompanyId { get; set; }
 
         [ForeignKey(nameof(CompanyId))]
