@@ -97,10 +97,12 @@ namespace BTCA.DataAccess.EF
                     .IsUnique();
             });
 
-            modelBuilder.Entity<StateProvinceCode>().Property(p => p.StateCode)
+            modelBuilder.Entity<StateProvinceCode>()
+                .Property(p => p.StateCode)
                 .HasColumnType("nchar(2)");  
 
-            modelBuilder.Entity<StateProvinceCode>().Property(p => p.CountryCode)
+            modelBuilder.Entity<StateProvinceCode>()
+                .Property(p => p.CountryCode)
                 .HasColumnType("nchar(3)");   
 
             modelBuilder.Entity<DutyStatus>(entity => 
@@ -128,7 +130,47 @@ namespace BTCA.DataAccess.EF
             {
                 entity.HasIndex(load => load.DispatchDate)
                     .HasName("Idx_LoadDispatchDate");
-            });                                                                                           
+            }); 
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.DispatchDate)
+                .HasDefaultValue(DateTime.Now); 
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.EmptyBeginMiles)
+                .HasDefaultValue(0); 
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.EmptyEndMiles)
+                .HasDefaultValue(0);
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.LoadedBeginMiles)
+                .HasDefaultValue(0);   
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.LoadedEndMiles)
+                .HasDefaultValue(0);
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.FuelSurchargeRate)
+                .HasDefaultValue(0.0);                    
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.EmptyMilesRate)
+                .HasDefaultValue(0.0);                 
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.LoadedMilesRate)
+                .HasDefaultValue(0.0); 
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.NumberOfPickups)
+                .HasDefaultValue(0);                  
+
+            modelBuilder.Entity<LoadAssignment>()
+                .Property(load => load.NumberOfStops)
+                .HasDefaultValue(0);                                                      
         }                 
     }
 }
