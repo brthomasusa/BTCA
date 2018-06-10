@@ -21,6 +21,9 @@ namespace BTCA.Common.Entities
         public virtual string CountryCode { get; set; }  
 
         [InverseProperty(nameof(Address.StateProvinceCode))]
-        public virtual List<Address> Addresses { get; set; } = new List<Address>();        
+        public virtual List<Address> Addresses { get; set; } = new List<Address>(); 
+
+        [InverseProperty(nameof(DutyStatusChangeLocation.StateProvinceCode))] 
+        public virtual List<DutyStatusChangeLocation> DutyStatusChangeLocations { get; set; } = new List<DutyStatusChangeLocation>();      
     }
 }
