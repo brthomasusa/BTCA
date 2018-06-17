@@ -14,7 +14,7 @@ namespace BTCA.Common.Entities
         [Required, MaxLength(20), Display(Name = "Load Number")]
         public virtual string LoadNumber { get; set; }
 
-        [Required, Display(Name = "Dispatch Date")]
+        [Required, Display(Name = "Dispatch Date"), DataType(DataType.Date)]
         public virtual DateTime DispatchDate { get; set; }
 
         [Display(Name = "Empty Begin")]
@@ -38,20 +38,21 @@ namespace BTCA.Common.Entities
         [Required, Display(Name = "Loaded Rate")]
         public virtual double LoadedMilesRate { get; set; }
 
-        [Required, Display(Name = "Pickups")]
-        public virtual int NumberOfPickups { get; set; }
+        [MaxLength(30), Display(Name = "Bill of Laden")]
+        public virtual string BillOfLaden { get; set; }
 
-        [Required, Display(Name = "Stops")]
-        public virtual int NumberOfStops { get; set; }
-
+        [DataType(DataType.Date), Display(Name = "Settlement Date")]
         public virtual DateTime SettlementDate { get; set; }
 
         [MaxLength(4000)]
         public virtual string Notes { get; set; }
 
-        public virtual int CompanyId { get; set; }
+        [Required, Display(Name = "AppUser Id")]
+        public virtual int Id { get; set; }
 
-        [ForeignKey(nameof(CompanyId))]
-        public virtual Company Company { get; set; }          
+        [ForeignKey(nameof(Id))]
+
+        public virtual AppUser Driver { get; set; }    
+                   
     }
 }
