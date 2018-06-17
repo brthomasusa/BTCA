@@ -15,5 +15,8 @@ namespace BTCA.Common.Entities
 
         [Required, MaxLength(35), Display(Name = "Description")]
         public virtual string Description { get; set; }
+
+        [InverseProperty(nameof(DailyLogDetail.DutyStatusActivity))]
+        public virtual IList<DailyLogDetail> DailyLogDetails { get; set; } = new List<DailyLogDetail>();        
     }
 }
