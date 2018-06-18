@@ -35,7 +35,7 @@ namespace BTCA.DataAccess.EF
 
             if (!optionsBuilder.IsConfigured)
             {
-                var connection = @"Server=tcp:mssql-svr,1433;Database=HOSv3;User ID=sa;Password=Info99Gum;Connection Timeout=30";
+                var connection = @"Server=tcp:localhost,1433;Database=BTCAv1;User ID=sa;Password=Info99Gum;Connection Timeout=30";
                 optionsBuilder.UseSqlServer(connection, options => options.EnableRetryOnFailure());
             }
         }
