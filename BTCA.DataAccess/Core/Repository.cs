@@ -16,29 +16,14 @@ namespace BTCA.DataAccess.Core
 
         public Repository(HOSContext ctx) => _context = ctx;
 
-        public T Single<T>(Expression<Func<T, bool>> expression) where T : class
-        {
-            return All<T>().FirstOrDefault(expression);
-        }
-
         public IQueryable<T> All<T>() where T : class
         {
             return _context.Set<T>().AsQueryable();
         }
 
         public virtual IEnumerable<T> Filter<T>(Expression<Func<T, bool>> predicate) where T : class
-        {
-            // return _context.Set<T>().Where<T>(predicate).AsQueryable<T>();
+        {            
             return _context.Set<T>().Where<T>(predicate).AsEnumerable<T>();
-        }
-
-        public virtual IEnumerable<T> Filter<T>(Expression<Func<T, bool>> filter, out int total, int index = 0, int size = 50) where T : class
-        {
-            int skipCount = index * size;
-            var _resetSet = filter != null ? _context.Set<T>().Where<T>(filter).AsQueryable() : _context.Set<T>().AsQueryable();
-            _resetSet = skipCount == 0 ? _resetSet.Take(size) : _resetSet.Skip(skipCount).Take(size);
-            total = _resetSet.Count();
-            return _resetSet.AsQueryable();
         }
 
         public virtual void Create<T>(T TObject) where T : class
@@ -103,5 +88,6 @@ namespace BTCA.DataAccess.Core
         {
             get { return _context; }
         } 
+             
     }
 }
