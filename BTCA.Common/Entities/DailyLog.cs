@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BTCA.Common.Core;
+using BTCA.Common.Validations;
 
 namespace BTCA.Common.Entities
 {
@@ -15,10 +16,12 @@ namespace BTCA.Common.Entities
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}", ApplyFormatInEditMode = true)]
         public virtual DateTime LogDate { get; set; }
 
+        // [Range(int.MinValue, 0)]
         [Display(Name = "Beginning Mileage")]
+        [MustNotBeGreaterThan(nameof(EndingMileage)), NotNegative]  // Custom validation
         public virtual int BeginningMileage { get; set; }
 
-        [Display(Name = "Ending Mileage")]
+        [Display(Name = "Ending Mileage"), Range(int.MinValue, 0)]
         public virtual int EndingMileage { get; set; }
 
         [Required, MaxLength(25), Display(Name = "Truck Number")]

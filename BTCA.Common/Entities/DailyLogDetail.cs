@@ -15,8 +15,18 @@ namespace BTCA.Common.Entities
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public virtual DateTime StartTime { get; set; }
 
+        [DataType(DataType.DateTime), Display(Name = "Stop Time")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public virtual DateTime StopTime { get; set; }        
 
+        [Required, MaxLength(35), Display(Name = "Location")]
+        public virtual string LocationCity { get; set; }
 
+        public virtual decimal Longitude { get; set; }
+
+        public virtual decimal Latitude { get; set; }
+
+        public virtual string Notes { get; set; }
 
         [Required]
         public virtual int LogID { get; set; }

@@ -26,6 +26,8 @@ namespace BTCA.DataAccess.EF
         public virtual DbSet<DutyStatusActivity> DutyStatusActivities { get; set; }
         public virtual DbSet<DutyStatusChangeLocation> DutyStatusChangeLocations { get; set; }
         public virtual DbSet<LoadAssignment> Loads { get; set; }
+        public virtual DbSet<DailyLog> DailyLogs { get; set; }
+        public virtual DbSet<DailyLogDetail> DailyLogDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -81,13 +83,13 @@ namespace BTCA.DataAccess.EF
                 entity.HasIndex(s => s.StateCode)
                     .HasName("Uniq_StateCode")
                     .IsUnique();
-            });
 
-            modelBuilder.Entity<StateProvinceCode>(entity => 
-            {
                 entity.HasIndex(c => c.StateName)
                     .HasName("Uniq_StateName")
-                    .IsUnique();
+                    .IsUnique(); 
+
+                entity.Property(p => p.StateCode).HasColumnType("nchar(2)");  
+                entity.Property(p => p.CountryCode).HasColumnType("nchar(3)");                 
             });
 
             modelBuilder.Entity<AppUser>(entity => 
@@ -96,14 +98,6 @@ namespace BTCA.DataAccess.EF
                     .HasName("Uniq_UserName")
                     .IsUnique();
             });
-
-            modelBuilder.Entity<StateProvinceCode>()
-                .Property(p => p.StateCode)
-                .HasColumnType("nchar(2)");  
-
-            modelBuilder.Entity<StateProvinceCode>()
-                .Property(p => p.CountryCode)
-                .HasColumnType("nchar(3)");   
 
             modelBuilder.Entity<DutyStatus>(entity => 
             {
@@ -119,58 +113,37 @@ namespace BTCA.DataAccess.EF
                     .IsUnique();
             });
 
-            modelBuilder.Entity<LoadAssignment>(entity => 
+            modelBuilder.Entity<LoadAssignment>(la => 
             {
-                entity.HasIndex(load => load.LoadNumber)
-                    .HasName("Uniq_LoadNumber")
+                la.HasIndex(load => load.LoadNumber).HasName("Idx_LoadNumber");
+                la.HasIndex(load => load.DispatchDate).HasName("Idx_LoadDispatchDate");
+                la.Property(load => load.DispatchDate).HasDefaultValue(DateTime.Now);
+                la.Property(load => load.EmptyBeginMiles).HasDefaultValue(0);
+                la.Property(load => load.EmptyEndMiles).HasDefaultValue(0); 
+                la.Property(load => load.LoadedBeginMiles).HasDefaultValue(0);
+                la.Property(load => load.LoadedEndMiles).HasDefaultValue(0);
+                la.Property(load => load.FuelSurchargeRate).HasColumnType("decimal(5, 3)").HasDefaultValue(0.0);
+                la.Property(load => load.EmptyMilesRate).HasColumnType("decimal(5, 3)").HasDefaultValue(0.0);
+                la.Property(load => load.LoadedMilesRate).HasColumnType("decimal(5, 3)").HasDefaultValue(0.0);
+            });
+
+            modelBuilder.Entity<DailyLog>(entity => 
+            {
+                entity.HasIndex(d => new { d.LogDate, d.TruckNumber, d.DriverID })
+                    .HasName("Uniq_DateTrkNumDrvID")
                     .IsUnique();
-            }); 
 
-            modelBuilder.Entity<LoadAssignment>(entity => 
+                entity.HasIndex(d => d.LogDate)
+                    .HasName("Idx_DailyLogDate");
+
+                entity.Property(dl => dl.LogDate).HasColumnType("date");                    
+            });
+
+            modelBuilder.Entity<DailyLogDetail>(entity => 
             {
-                entity.HasIndex(load => load.DispatchDate)
-                    .HasName("Idx_LoadDispatchDate");
-            }); 
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.DispatchDate)
-                .HasDefaultValue(DateTime.Now); 
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.EmptyBeginMiles)
-                .HasDefaultValue(0); 
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.EmptyEndMiles)
-                .HasDefaultValue(0);
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.LoadedBeginMiles)
-                .HasDefaultValue(0);   
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.LoadedEndMiles)
-                .HasDefaultValue(0);
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.FuelSurchargeRate)
-                .HasDefaultValue(0.0);                    
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.EmptyMilesRate)
-                .HasDefaultValue(0.0);                 
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.LoadedMilesRate)
-                .HasDefaultValue(0.0); 
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.NumberOfPickups)
-                .HasDefaultValue(0);                  
-
-            modelBuilder.Entity<LoadAssignment>()
-                .Property(load => load.NumberOfStops)
-                .HasDefaultValue(0);                                                      
+                entity.Property(dl => dl.StartTime).HasColumnType("smalldatetime");                    
+                entity.Property(dl => dl.StopTime).HasColumnType("smalldatetime");
+            });                                                                  
         }                 
     }
 }
