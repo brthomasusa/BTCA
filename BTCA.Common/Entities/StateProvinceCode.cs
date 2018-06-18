@@ -26,7 +26,7 @@ namespace BTCA.Common.Entities
         [InverseProperty(nameof(DutyStatusChangeLocation.StateProvinceCode))] 
         public virtual List<DutyStatusChangeLocation> DutyStatusChangeLocations { get; set; } = new List<DutyStatusChangeLocation>();      
 
-        [InverseProperty(nameof(DailyLogDetail.StateProvinceId))]
+        [InverseProperty(nameof(DailyLogDetail.StateProvinceCode))]
         public virtual IList<DailyLogDetail> DailyLogDetails { get; set; } = new List<DailyLogDetail>();         
     }
 }
