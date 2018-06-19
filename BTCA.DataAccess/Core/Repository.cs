@@ -26,6 +26,11 @@ namespace BTCA.DataAccess.Core
             return _context.Set<T>().Where<T>(predicate).AsEnumerable<T>();
         }
 
+        public virtual T Find<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return _context.Set<T>().FirstOrDefault<T>(predicate);
+        }
+
         public virtual void Create<T>(T TObject) where T : class
         {
             _context.Set<T>().Add(TObject);
@@ -44,8 +49,8 @@ namespace BTCA.DataAccess.Core
                _context.Set<T>().Attach(TObject);
                entry.State = EntityState.Modified;
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
+                _logger.Error(ex, ex.Message);
                 throw ex;
             }
         }
@@ -62,14 +67,16 @@ namespace BTCA.DataAccess.Core
             return _context.Set<T>().Count<T>(predicate) > 0;
         }
 
-        public virtual T Find<T>(Expression<Func<T, bool>> predicate) where T : class
-        {
-            return _context.Set<T>().FirstOrDefault<T>(predicate);
-        }
-
         public virtual void ExecuteProcedure(String procedureCommand, params SqlParameter[] sqlParams)
         {
-            _context.Database.ExecuteSqlCommand(procedureCommand, sqlParams);
+            try {
+
+                _context.Database.ExecuteSqlCommand(procedureCommand, sqlParams);
+
+            } catch (Exception ex) {
+                _logger.Error(ex, ex.Message);
+                throw ex;
+            }            
         } 
 
         public void Save()
@@ -79,6 +86,7 @@ namespace BTCA.DataAccess.Core
                 _context.SaveChanges();
             
             } catch (Exception ex) {
+                _logger.Error(ex, ex.Message);
                 throw ex;
             }
                          
