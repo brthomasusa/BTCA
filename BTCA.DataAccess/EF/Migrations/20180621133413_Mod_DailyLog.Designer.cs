@@ -11,9 +11,10 @@ using System;
 namespace BTCA.DataAccess.EF.Migrations
 {
     [DbContext(typeof(HOSContext))]
-    partial class HOSContextModelSnapshot : ModelSnapshot
+    [Migration("20180621133413_Mod_DailyLog")]
+    partial class Mod_DailyLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

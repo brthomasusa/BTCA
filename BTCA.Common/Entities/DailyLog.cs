@@ -30,6 +30,9 @@ namespace BTCA.Common.Entities
         [MaxLength(25), Display(Name = "Trailer Number")]
         public virtual string TrailerNumber { get; set; }
 
+        [Required]
+        public virtual bool IsSigned { get; set; }
+
         [MaxLength(4000)]
         public virtual string Notes { get; set; }         
 

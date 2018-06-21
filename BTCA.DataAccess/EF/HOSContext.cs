@@ -25,7 +25,7 @@ namespace BTCA.DataAccess.EF
         public virtual DbSet<DutyStatus> DutyStatuses { get; set; }
         public virtual DbSet<DutyStatusActivity> DutyStatusActivities { get; set; }
         public virtual DbSet<DutyStatusChangeLocation> DutyStatusChangeLocations { get; set; }
-        public virtual DbSet<LoadAssignment> Loads { get; set; }
+        public virtual DbSet<LoadAssignment> LoadAssignments { get; set; }
         public virtual DbSet<DailyLog> DailyLogs { get; set; }
         public virtual DbSet<DailyLogDetail> DailyLogDetails { get; set; }
 

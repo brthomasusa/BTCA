@@ -11,11 +11,11 @@ namespace BTCA.Common.Entities
         [Key]
         public virtual int LogDetailID { get; set; }
 
-        [Required, DataType(DataType.DateTime), Display(Name = "Start Time")]
+        [Required, DataType(DataType.DateTime), Display(Name = "Begin")]
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public virtual DateTime StartTime { get; set; }
 
-        [DataType(DataType.DateTime), Display(Name = "Stop Time")]
+        [DataType(DataType.DateTime), Display(Name = "End")]
         [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy HH:mm}", ApplyFormatInEditMode = true)]
         public virtual DateTime StopTime { get; set; }        
 
