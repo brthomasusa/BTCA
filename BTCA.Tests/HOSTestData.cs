@@ -8,6 +8,385 @@ namespace BTCA.Tests
 {
     public static class HOSTestData
     {
+        public static void LoadDailyLogTable(HOSContext ctx)
+        {
+            var data = new List<DailyLog> 
+            {
+                new DailyLog 
+                {
+                    LogID = 1,
+                    LogDate = new DateTime(2016,9,7),
+                    BeginningMileage = 899201,
+                    EndingMileage = 899423,
+                    TruckNumber = "3082",
+                    TrailerNumber = "9225",
+                    IsSigned = true,
+                    Notes = "Dropped trailer  9225 at Whirlpool and picked up loaded trailer 9159",
+                    DriverID = 4
+                },
+                new DailyLog 
+                {
+                    LogID = 2,
+                    LogDate = new DateTime(2016,9,8),
+                    BeginningMileage = 899423,
+                    EndingMileage = 900065,
+                    TruckNumber = "3082",
+                    TrailerNumber = "9159",
+                    IsSigned = true,
+                    DriverID = 4
+                }                                
+            };
+
+            ctx.DailyLogs.AddRange(data);
+            ctx.SaveChanges();             
+        }
+
+        public static void LoadAppUserTable(HOSContext ctx)
+        {
+            var data = new List<AppUser> 
+            {
+                new AppUser 
+                { 
+                    Id = 1, 
+                    CompanyID = 1, 
+                    ConcurrencyStamp = "d804c50d-5ed4-46f4-b63e-cad6314271d7", 
+                    Email = "admin@btechnical-consulting.com", 
+                    FirstName = "System", 
+                    LastName = "Administrator", 
+                    PhoneNumber = "214-687-9000",
+                    PasswordHash = "AQAAAAEAACcQAAAAEGdu5p7gEArfjWr4O8J69pUsFE/SRU2bBhtf8Axq5W9SKQ8VIMxlJPxk71HN0xVhIg==",
+                    SecurityStamp = "198469f7-7243-48ff-9649-a5dbe6236280",
+                    UserName = "SysAdmin" 
+                },
+                new AppUser 
+                { 
+                    Id = 2, 
+                    CompanyID = 6, 
+                    ConcurrencyStamp = "9cd70dde-f381-4a8b-b93f-28a840514d32", 
+                    Email = "j.doe@cardlog.com", 
+                    FirstName = "John", 
+                    LastName = "Doe", 
+                    PhoneNumber = "555-555-5555",
+                    PhoneExtension = "5555",
+                    PasswordHash = "AQAAAAEAACcQAAAAEBwwUr9zA3rjwMHWX9muXLMVHwNQhEUoezBLea5jmaGNAT5sH8zuIz04qjA9zH4R7Q==",
+                    SecurityStamp = "3966bcfa-59dd-44be-b83e-cab75312b0e6",
+                    UserName = "jdoe" 
+                },
+                new AppUser 
+                { 
+                    Id = 3, 
+                    CompanyID = 6, 
+                    ConcurrencyStamp = "93080d23-4460-4fd8-9dec-48c81e988cb2", 
+                    Email = "f.castro@cardlog.com", 
+                    FirstName = "Fidel", 
+                    LastName = "Castro", 
+                    PhoneNumber = "555-555-1235",
+                    PhoneExtension = "6844",
+                    PasswordHash = "AQAAAAEAACcQAAAAEBwwUr9zA3rjwMHWX9muXLMVHwNQhEUoezBLea5jmaGNAT5sH8zuIz04qjA9zH4R7Q==",
+                    SecurityStamp = "c4cd4b43-7f5d-49a5-8354-982c4a254814",
+                    UserName = "fcastro" 
+                },
+                new AppUser 
+                { 
+                    Id = 4, 
+                    CompanyID = 2, 
+                    ConcurrencyStamp = "96f0496c-ed03-4329-aa20-b3d362aeed41", 
+                    Email = "j.firstchoicetransport.com", 
+                    FirstName = "Jeffery", 
+                    LastName = "Superdriver", 
+                    PhoneNumber = "800-555-5555",
+                    PhoneExtension = "999",
+                    PasswordHash = "AQAAAAEAACcQAAAAEBwwUr9zA3rjwMHWX9muXLMVHwNQhEUoezBLea5jmaGNAT5sH8zuIz04qjA9zH4R7Q==",
+                    SecurityStamp = "5e6423e8-5b47-4104-87ae-a399ee129926",
+                    UserName = "leadfoot" 
+                },
+                new AppUser 
+                { 
+                    Id = 5, 
+                    CompanyID = 6, 
+                    ConcurrencyStamp = "5f5af8e0-0bb5-4515-98e0-91ba923f3166", 
+                    Email = "j.thompson@cardlog.com", 
+                    FirstName = "Josef", 
+                    LastName = "Thompsonski", 
+                    PhoneNumber = "800-555-5555",
+                    PhoneExtension = "999",
+                    PasswordHash = "AQAAAAEAACcQAAAAEBwwUr9zA3rjwMHWX9muXLMVHwNQhEUoezBLea5jmaGNAT5sH8zuIz04qjA9zH4R7Q==",
+                    SecurityStamp = "d23a1ac9-8a65-4566-8be7-c0c36d971b1c",
+                    UserName = "jthompsonski" 
+                }                                                                
+            };
+
+            ctx.Users.AddRange(data);
+            ctx.SaveChanges();             
+        }
+
+        public static void LoadAppRoleTable(HOSContext ctx)
+        {
+            var data = new List<AppRole> 
+            {
+                new AppRole { Id = 1, ConcurrencyStamp = "08e72399-bb2f-49f5-bbe3-693de3d5c617", Name = "Admin", NormalizedName = "ADMIN" },
+                new AppRole { Id = 2, ConcurrencyStamp = "1298a579-c85a-4723-bcc4-f0d6b2b64123", Name = "Driver", NormalizedName = "DRIVER" },
+                new AppRole { Id = 3, ConcurrencyStamp = "46797f8c-5830-4fb2-8fc5-81b20b630fb4", Name = "Compliance", NormalizedName = "COMPLIANCE" },
+                new AppRole { Id = 4, ConcurrencyStamp = "3fa3d51e-4d5c-461e-99c3-3ca5f2e6b38b", Name = "Accounting", NormalizedName = "ACCOUNTING" },
+                new AppRole { Id = 5, ConcurrencyStamp = "4044c66b-081f-4db0-9daf-f8cf6910a438", Name = "Users", NormalizedName = "USERS" }
+            };
+
+            ctx.Roles.AddRange(data);
+            ctx.SaveChanges(); 
+        }        
+
+        public static void LoadDailyLogDetailTable(HOSContext ctx)
+        {
+            var data = new List<DailyLogDetail> 
+            {
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 1, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,7, 12,45,0),
+                    StopTime = new DateTime(2016,9,7, 13,0,0),
+                    LocationCity = "Ft Worth",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 1,
+                    LogID = 1  
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 2, 
+                    DutyStatusID = 3, 
+                    StartTime = new DateTime(2016,9,7, 13,0,0),
+                    StopTime = new DateTime(2016,9,7, 14,0,0),
+                    LocationCity = "Wilmer",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 11,
+                    LogID = 1  
+                },     
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 3, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,7, 14,0,0),
+                    StopTime = new DateTime(2016,9,7, 14,15,0),
+                    LocationCity = "Wilmer",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 3,
+                    LogID = 1  
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 4, 
+                    DutyStatusID = 1, 
+                    StartTime = new DateTime(2016,9,7, 14,15,0),
+                    StopTime = new DateTime(2016,9,7, 18,30,0),
+                    LocationCity = "Wilmer",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 9,
+                    LogID = 1 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 5, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,7, 18,30,0),
+                    StopTime = new DateTime(2016,9,7, 18,45,0),
+                    LocationCity = "Dallas",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 7,
+                    LogID = 1 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 6, 
+                    DutyStatusID = 3, 
+                    StartTime = new DateTime(2016,9,7, 18,45,0),
+                    StopTime = new DateTime(2016,9,7, 18,45,0),
+                    LocationCity = "Dallas",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 11,
+                    LogID = 1 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 7, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,7, 21,30,0),
+                    StopTime = new DateTime(2016,9,7, 21,45,0),
+                    LocationCity = "Jolly",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 2,
+                    LogID = 1 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 8, 
+                    DutyStatusID = 2, 
+                    StartTime = new DateTime(2016,9,7, 21,30,0),
+                    StopTime = new DateTime(2016,9,7, 23,59,0),
+                    LocationCity = "Jolly",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 10,
+                    LogID = 1 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 9, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,8, 7,45,0),
+                    StopTime = new DateTime(2016,9,8, 8,00,0),
+                    LocationCity = "Jolly",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 1,
+                    LogID = 2 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 10, 
+                    DutyStatusID = 3, 
+                    StartTime = new DateTime(2016,9,8, 8,0,0),
+                    StopTime = new DateTime(2016,9,8, 9,0,0),
+                    LocationCity = "Jolly",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 11,
+                    LogID = 2 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 11, 
+                    DutyStatusID = 1, 
+                    StartTime = new DateTime(2016,9,8, 9,0,0),
+                    StopTime = new DateTime(2016,9,8, 9,30,0),
+                    LocationCity = "Quanah",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 9,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 12, 
+                    DutyStatusID = 3, 
+                    StartTime = new DateTime(2016,9,8, 9,30,0),
+                    StopTime = new DateTime(2016,9,8, 12,0,0),
+                    LocationCity = "Quanah",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 11,
+                    LogID = 2 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 13, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,8, 12,0,0),
+                    StopTime = new DateTime(2016,9,8, 12,15,0),
+                    LocationCity = "Amarillo",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 7,
+                    LogID = 2 
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 14, 
+                    DutyStatusID = 1, 
+                    StartTime = new DateTime(2016,9,8, 12,15,0),
+                    StopTime = new DateTime(2016,9,8, 12,30,0),
+                    LocationCity = "Amarillo",
+                    DutyStatusActivityID = 9,
+                    StateProvinceId = 45,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 15, 
+                    DutyStatusID = 3, 
+                    StartTime = new DateTime(2016,9,8, 12,30,0),
+                    StopTime = new DateTime(2016,9,8, 16,30,0),
+                    LocationCity = "Amarillo",
+                    StateProvinceId = 45,
+                    DutyStatusActivityID = 11,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 16, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,8, 16,30,0),
+                    StopTime = new DateTime(2016,9,8, 16,45,0),
+                    LocationCity = "Lamar",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 5,
+                    LogID = 2
+                },                
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 17, 
+                    DutyStatusID = 1, 
+                    StartTime = new DateTime(2016,9,8, 16,45,0),
+                    StopTime = new DateTime(2016,9,8, 17,30,0),
+                    LocationCity = "Lamar",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 9,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 18, 
+                    DutyStatusID = 3, 
+                    StartTime = new DateTime(2016,9,8, 17,30,0),
+                    StopTime = new DateTime(2016,9,8, 20,45,0),
+                    LocationCity = "Aurora",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 11,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 19, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,8, 20,45,0),
+                    StopTime = new DateTime(2016,9,8, 21,00,0),
+                    LocationCity = "Aurora",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 4,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 20, 
+                    DutyStatusID = 1, 
+                    StartTime = new DateTime(2016,9,8, 21,00,0),
+                    StopTime = new DateTime(2016,9,8, 21,15,0),
+                    LocationCity = "Aurora",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 9,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 21, 
+                    DutyStatusID = 4, 
+                    StartTime = new DateTime(2016,9,8, 21,15,0),
+                    StopTime = new DateTime(2016,9,8, 21,30,0),
+                    LocationCity = "Aurora",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 2,
+                    LogID = 2
+                },
+                new DailyLogDetail 
+                { 
+                    LogDetailID = 22, 
+                    DutyStatusID = 1, 
+                    StartTime = new DateTime(2016,9,8, 21,30,0),
+                    StopTime = new DateTime(2016,9,8, 23,59,0),
+                    LocationCity = "Aurora",
+                    StateProvinceId = 6,
+                    DutyStatusActivityID = 9,
+                    LogID = 2
+                }
+            };
+
+            ctx.DailyLogDetails.AddRange(data);
+            ctx.SaveChanges();            
+        }
+
         public static void LoadDutyStatusTable(HOSContext ctx)
         {
             var data = new List<DutyStatus>
