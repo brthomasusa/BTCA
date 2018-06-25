@@ -7,16 +7,16 @@ namespace BTCA.Common.Entities
 {
     public class AppUser : IdentityUser<int>
     {
-        [Required, Display(Name= "First Name")]
+        [Required, MaxLength(30), Display(Name= "First Name")]
         public virtual string FirstName { get; set; }
 
-        [Required, Display(Name = "Last Name")]
+        [Required, MaxLength(30), Display(Name = "Last Name")]
         public virtual string LastName { get; set; }
 
-        [Display(Name = "M.I.")]
+        [ MaxLength(1), Display(Name = "M.I.")]
         public virtual string MiddleInitial { get; set; }
 
-        [Display(Name = "Extension")]
+        [ MaxLength(6), Display(Name = "Extension")]
         public virtual string PhoneExtension { get; set; }
 
         [Required]

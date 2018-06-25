@@ -51,7 +51,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 return _repository.Find<Company>(expression);
 
             } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanies: Operation failed using expression {0}", expression);
+                _logger.Error(ex, "GetCompany: Operation failed using expression {0}", expression);
                 throw ex;                
             }            
         }

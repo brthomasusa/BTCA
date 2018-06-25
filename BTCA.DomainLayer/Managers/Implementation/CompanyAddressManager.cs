@@ -29,11 +29,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 var companyAddress = (CompanyAddress)entity;
                 var address = MapFromCompanyAddress(companyAddress);
 
-                _logger.Info("Creating record for {0}", this.GetType());
-
                 _repository.Create<Address>(address);
-
-                _logger.Info("Record saved for {0}", this.GetType());
 
             } catch (Exception ex) {
                 _logger.Error(ex, "Create: Create failed for company address.");
@@ -48,11 +44,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 var companyAddress = (CompanyAddress)entity;
                 var address = MapFromCompanyAddress(companyAddress);
 
-                _logger.Info("Updating record for {0}", this.GetType());
-
                 _repository.Update<Address>(address);
-
-                _logger.Info("Record saved for {0}", this.GetType());
 
             } catch (Exception ex) {
                 _logger.Error(ex, "Update: Update failed for company address with ID: {0}", ((CompanyAddress)entity).ID);
@@ -67,11 +59,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 var companyAddress = (CompanyAddress)entity;
                 var address = MapFromCompanyAddress(companyAddress);
 
-                _logger.Info("Deleting record for {0}", this.GetType());
-
                 _repository.Delete<Address>(address);
-
-                _logger.Info("Record saved for {0}", this.GetType());
 
             } catch (Exception ex) {
                 _logger.Error(ex, "Delete: Delete failed for company address with ID: {0}", ((CompanyAddress)entity).ID);
@@ -86,7 +74,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Save();
 
             } catch (Exception ex) {
-                _logger.Error(ex, "SaveChanges: Saving entity to the database failed");
+                _logger.Error(ex, "SaveChanges: Saving company address to the database failed");
                 throw ex;
             }            
         } 
@@ -107,13 +95,6 @@ namespace BTCA.DomainLayer.Managers.Implementation
         public IEnumerable<CompanyAddress> GetCompanyAddresses(int companyId)
         {
             try {
-
-                // Multiple ways of doing the same thing!!
-                // var AddressesQuery = from company_addresses in _repository.DBContext.Companies
-                //                                              .AsNoTracking()
-                //                                              .AsQueryable()
-                //                         where company_addresses.ID == companyId
-                //                         select company_addresses;
 
                 var query = _repository.DBContext.Addresses
                         .Where(c => c.CompanyId == companyId)
