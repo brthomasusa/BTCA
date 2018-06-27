@@ -34,7 +34,17 @@ namespace BTCA.Tests
                     TrailerNumber = "9159",
                     IsSigned = true,
                     DriverID = 4
-                }                                
+                },
+                new DailyLog 
+                {
+                    LogID = 3,
+                    LogDate = new DateTime(2016,9,9),
+                    BeginningMileage = 900065,
+                    TruckNumber = "3082",
+                    TrailerNumber = "9159",
+                    IsSigned = false,
+                    DriverID = 4
+                }                                                  
             };
 
             ctx.DailyLogs.AddRange(data);
@@ -373,14 +383,13 @@ namespace BTCA.Tests
                 new DailyLogDetail 
                 { 
                     LogDetailID = 22, 
-                    DutyStatusID = 1, 
+                    DutyStatusID = 2, 
                     StartTime = new DateTime(2016,9,8, 21,30,0),
-                    StopTime = new DateTime(2016,9,8, 23,59,0),
                     LocationCity = "Aurora",
                     StateProvinceId = 6,
-                    DutyStatusActivityID = 9,
+                    DutyStatusActivityID = 10,
                     LogID = 2
-                }
+                }               
             };
 
             ctx.DailyLogDetails.AddRange(data);

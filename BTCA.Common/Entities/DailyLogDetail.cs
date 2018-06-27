@@ -42,12 +42,14 @@ namespace BTCA.Common.Entities
 
         public virtual DutyStatus DutyStatus { get; set; }
 
+        [Required]
         public virtual int StateProvinceId { get; set; }
 
         [ForeignKey(nameof(StateProvinceId))]
 
         public virtual StateProvinceCode StateProvinceCode { get; set; }
 
+        [Required]
         public virtual int DutyStatusActivityID { get; set; }
 
         [ForeignKey(nameof(DutyStatusActivityID))] 

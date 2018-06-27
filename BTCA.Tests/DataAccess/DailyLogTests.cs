@@ -276,7 +276,7 @@ namespace BTCA.Tests.DataAccess
                     var dailyLogs = repository.All<DailyLog>();
 
                     Assert.NotNull(dailyLogs);
-                    Assert.Equal(2, dailyLogs.ToList().Count());
+                    Assert.Equal(3, dailyLogs.ToList().Count());
                 }
 
             } finally {
@@ -318,7 +318,7 @@ namespace BTCA.Tests.DataAccess
                     var dailyLogs = repository.Filter<DailyLog>(log => log.LogDate > lowDate && log.LogDate < highDate );
 
                     Assert.NotNull(dailyLogs);
-                    Assert.Equal(2, dailyLogs.ToList().Count());
+                    Assert.Equal(3, dailyLogs.ToList().Count());
                 }
 
             } finally {
@@ -586,7 +586,7 @@ namespace BTCA.Tests.DataAccess
                     Assert.NotNull(user);
 
                     var dailyLogs = repository.Filter<DailyLog>(dl => dl.DriverID == user.Id);
-                    Assert.Equal(2, dailyLogs.ToList().Count());
+                    Assert.Equal(3, dailyLogs.ToList().Count());
                 }
 
             } finally {

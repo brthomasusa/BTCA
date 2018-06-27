@@ -10,7 +10,7 @@ namespace BTCA.Common.Entities
         [Key]
         public virtual int DutyStatusID { get; set; }
 
-        [Required, MaxLength(8), Display(Name = "Short Name")]
+        [Required, MaxLength(8), Display(Name = "Duty Status")]
         public virtual string ShortName { get; set; }
         
         [Required, MaxLength(25), Display(Name = "Long Name")]

@@ -29,7 +29,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                     on dailyLog.DriverID equals appUser.Id
                                     select new DailyLogModel
                                     {
-                                        ID = dailyLog.LogID,
+                                        LogID = dailyLog.LogID,
                                         LogDate = dailyLog.LogDate,
                                         BeginningMileage = dailyLog.BeginningMileage,
                                         EndingMileage = dailyLog.EndingMileage,
@@ -70,7 +70,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                     on dailyLog.DriverID equals appUser.Id
                                     select new DailyLogModel
                                     {
-                                        ID = dailyLog.LogID,
+                                        LogID = dailyLog.LogID,
                                         LogDate = dailyLog.LogDate,
                                         BeginningMileage = dailyLog.BeginningMileage,
                                         EndingMileage = dailyLog.EndingMileage,
@@ -89,7 +89,12 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                         UpdatedOn = dailyLog.UpdatedOn
                                     };
 
-                return dailyLogModel.FirstOrDefault(); 
+                var buffer = dailyLogModel.FirstOrDefault();
+                if (buffer != null) {
+                    LoadDailyLogDetails(buffer);
+                }
+
+                return buffer; 
 
             } catch (Exception ex) {
                 _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
@@ -114,6 +119,110 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
+        public IEnumerable<DailyLogDetailModel> GetDailyLogDetails(Expression<Func<DailyLogDetail, bool>> expression)
+        {
+            try {
+                
+                // Filter all DailyLogDetails by expression
+                var filterQuery = _repository.DBContext.DailyLogDetails
+                                .Where(expression)
+                                .AsQueryable()
+                                .AsNoTracking();
+
+                // Join filtered DailyLogDetails to DutyStatus, StateProvinceCode, and DutyStatusActivity tables
+                var logDetailModel = (from dailyDetailEntry in filterQuery
+                                      join dutyStatus in _repository.DBContext.DutyStatuses.AsNoTracking() 
+                                            on dailyDetailEntry.DutyStatusID equals dutyStatus.DutyStatusID
+                                      join stateCodes in _repository.DBContext.StateProvinceCodes.AsNoTracking() 
+                                            on dailyDetailEntry.StateProvinceId equals stateCodes.ID
+                                      join dutyStatusActivity in _repository.DBContext.DutyStatusActivities.AsNoTracking() 
+                                            on dailyDetailEntry.DutyStatusActivityID equals dutyStatusActivity.DutyStatusActivityID
+
+                                      select new DailyLogDetailModel 
+                                      {
+                                            LogDetailID = dailyDetailEntry.LogDetailID,
+                                            LogID = dailyDetailEntry.LogID,
+                                            DutyStatusID = dailyDetailEntry.DutyStatusID,
+                                            DutyStatusShortName = dutyStatus.ShortName,
+                                            StartTime = dailyDetailEntry.StartTime,
+                                            StopTime = dailyDetailEntry.StopTime,
+                                            ElapseTime = dailyDetailEntry.StopTime == null 
+                                                ? TimeSpan.Zero 
+                                                : dailyDetailEntry.StopTime - dailyDetailEntry.StartTime,
+                                            LocationCity = dailyDetailEntry.LocationCity,
+                                            StateProvinceId = dailyDetailEntry.StateProvinceId,
+                                            StateCode = stateCodes.StateCode,
+                                            Longitude = dailyDetailEntry.Longitude,
+                                            Latitude = dailyDetailEntry.Latitude,
+                                            DutyStatusActivity = dutyStatusActivity.Activity,
+                                            DutyStatusActivityID = dailyDetailEntry.DutyStatusActivityID,
+                                            Notes = dailyDetailEntry.Notes,
+                                            CreatedBy = dailyDetailEntry.CreatedBy,
+                                            CreatedOn = dailyDetailEntry.CreatedOn,
+                                            UpdatedBy = dailyDetailEntry.UpdatedBy,
+                                            UpdatedOn = dailyDetailEntry.UpdatedOn                                                   
+                                      });
+
+                return logDetailModel.OrderBy(log => log.StartTime).AsEnumerable();
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "Failed to retrieve daily log details with expression: {0}.", expression);
+                throw ex; 
+            }
+        }
+
+        public DailyLogDetailModel GetDailyLogDetail(Expression<Func<DailyLogDetail, bool>> expression)
+        {
+            try {
+                
+                // Filter all DailyLogDetails by expression
+                var filterQuery = _repository.DBContext.DailyLogDetails
+                                .Where(expression)
+                                .AsQueryable()
+                                .AsNoTracking();
+
+                // Join filtered DailyLogDetails to DutyStatus, StateProvinceCode, and DutyStatusActivity tables
+                var logDetailModel = (from dailyDetailEntry in filterQuery.AsNoTracking()
+                                      join dutyStatus in _repository.DBContext.DutyStatuses.AsNoTracking() 
+                                            on dailyDetailEntry.DutyStatusID equals dutyStatus.DutyStatusID
+                                      join stateCodes in _repository.DBContext.StateProvinceCodes.AsNoTracking() 
+                                            on dailyDetailEntry.StateProvinceId equals stateCodes.ID
+                                      join dutyStatusActivity in _repository.DBContext.DutyStatusActivities.AsNoTracking() 
+                                            on dailyDetailEntry.DutyStatusActivityID equals dutyStatusActivity.DutyStatusActivityID
+
+                                      select new DailyLogDetailModel 
+                                      {
+                                            LogDetailID = dailyDetailEntry.LogDetailID,
+                                            LogID = dailyDetailEntry.LogID,
+                                            DutyStatusID = dailyDetailEntry.DutyStatusID,
+                                            DutyStatusShortName = dutyStatus.ShortName,
+                                            StartTime = dailyDetailEntry.StartTime,
+                                            StopTime = dailyDetailEntry.StopTime,
+                                            ElapseTime = dailyDetailEntry.StopTime == null 
+                                                ? TimeSpan.Zero 
+                                                : dailyDetailEntry.StopTime - dailyDetailEntry.StartTime,
+                                            LocationCity = dailyDetailEntry.LocationCity,
+                                            StateProvinceId = dailyDetailEntry.StateProvinceId,
+                                            StateCode = stateCodes.StateCode,
+                                            Longitude = dailyDetailEntry.Longitude,
+                                            Latitude = dailyDetailEntry.Latitude,
+                                            DutyStatusActivity = dutyStatusActivity.Activity,
+                                            DutyStatusActivityID = dailyDetailEntry.DutyStatusActivityID,
+                                            Notes = dailyDetailEntry.Notes,
+                                            CreatedBy = dailyDetailEntry.CreatedBy,
+                                            CreatedOn = dailyDetailEntry.CreatedOn,
+                                            UpdatedBy = dailyDetailEntry.UpdatedBy,
+                                            UpdatedOn = dailyDetailEntry.UpdatedOn                                                   
+                                      });
+
+                return logDetailModel.FirstOrDefault();
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "Failed to retrieve daily log details with expression: {0}.", expression);
+                throw ex; 
+            }
+        }
+
         public void Create(BaseEntity entity)
         {            
             try {
@@ -129,6 +238,21 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
+        public void CreateLogDetail(BaseEntity entity)
+        {
+            try {
+
+                var model = (DailyLogDetailModel)entity;
+                var dailyLogDetail = MapDailyLogDetailModel2DailyLogDetail(model);
+
+                _repository.Create<DailyLogDetail>(dailyLogDetail);
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "CreateDetail: Create failed for daily log detail entry.");
+                throw ex;                
+            }            
+        }
+
         public void Update(BaseEntity entity)
         {
             try {
@@ -139,9 +263,24 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Update<DailyLog>(dailyLog);
 
             } catch (Exception ex) {
-                _logger.Error(ex, "Update: Update failed for daily log with ID: {0}", ((DailyLogModel)entity).ID);
+                _logger.Error(ex, "Update: Update failed for daily log with ID: {0}", ((DailyLogModel)entity).LogID);
                 throw ex;
             }
+        }
+
+        public void UpdateLogDetail(BaseEntity entity)
+        {
+            try {
+
+                var model = (DailyLogDetailModel)entity;
+                var dailyLogDetail = MapDailyLogDetailModel2DailyLogDetail(model);
+
+                _repository.Update<DailyLogDetail>(dailyLogDetail);
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "UpdateDetail: Update failed for daily log detail entry.");
+                throw ex;                
+            } 
         }
 
         public void Delete(BaseEntity entity)
@@ -159,6 +298,21 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
+        public void DeleteLogDetail(BaseEntity entity)
+        {
+            try {
+
+                var model = (DailyLogDetailModel)entity;
+                var dailyLogDetail = MapDailyLogDetailModel2DailyLogDetail(model);
+
+                _repository.Delete<DailyLogDetail>(dailyLogDetail);
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "DeleteDetail: Delete failed for daily log detail entry.");
+                throw ex;                
+            }             
+        }
+
         public void SaveChanges()
         {
             try {
@@ -171,11 +325,69 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }            
         } 
 
+        public DailyLogDetailModel GetLastPreTripInspection(Expression<Func<DailyLog, bool>> expression)
+        {
+            // expression should be the driver id
+            var filterQuery = _repository.DBContext.DailyLogs
+                            .Where(expression)
+                            .AsQueryable()
+                            .AsNoTracking();
+
+            // Join filtered (by driverID) DailyLog to DailyLogDetails
+            var logDetailModel = (from dailyLog in filterQuery.AsNoTracking()
+                                    join dailyLogDetail in _repository.DBContext.DailyLogDetails.AsNoTracking()
+                                        on dailyLog.LogID equals dailyLogDetail.LogID
+                                    orderby dailyLogDetail.StartTime
+
+                                    select new DailyLogDetailModel 
+                                    {
+                                        LogDetailID = dailyLogDetail.LogDetailID,
+                                        LogID = dailyLogDetail.LogID,
+                                        DutyStatusID = dailyLogDetail.DutyStatusID,
+                                        StartTime = dailyLogDetail.StartTime,
+                                        StopTime = dailyLogDetail.StopTime,
+                                        LocationCity = dailyLogDetail.LocationCity,
+                                        StateProvinceId = dailyLogDetail.StateProvinceId,
+                                        DutyStatusActivityID = dailyLogDetail.DutyStatusActivityID                                                  
+                                    });  
+
+            var shiftBeginQuery = from shiftBegin in logDetailModel 
+                                  where(shiftBegin.DutyStatusActivityID == 1)
+                                  orderby(shiftBegin.StartTime) 
+                                  select(shiftBegin);
+
+            return shiftBeginQuery.LastOrDefault();
+        }
+
+        
+        private DailyLogModel LoadDailyLogDetails(DailyLogModel dailyLogModel)
+        {
+            try {
+
+                // IEnumerable<DailyLogDetailModel>
+                var dailyLogDetails = GetDailyLogDetails(log => log.LogID == dailyLogModel.LogID);
+
+                if (dailyLogDetails != null)
+                {
+                    foreach (DailyLogDetailModel detail in dailyLogDetails)
+                    {
+                        dailyLogModel.DailyLogDetails.Add(detail);
+                    }
+                }
+
+                return dailyLogModel;
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
+                throw ex;                 
+            }
+        }
+
         private DailyLog MapDailyLogModel2DailyLog(DailyLogModel source)
         {
             var destination = new DailyLog 
             {
-                LogID = source.ID,
+                LogID = source.LogID,
                 LogDate = source.LogDate,
                 BeginningMileage = source.BeginningMileage,
                 EndingMileage = source.EndingMileage,
@@ -190,6 +402,30 @@ namespace BTCA.DomainLayer.Managers.Implementation
             };
 
             return destination;
-        }                             
+        }
+
+        private DailyLogDetail MapDailyLogDetailModel2DailyLogDetail(DailyLogDetailModel source)                             
+        {
+            var destination = new DailyLogDetail 
+            {
+                LogDetailID = source.LogDetailID,
+                LogID = source.LogID,
+                DutyStatusID = source.DutyStatusID,
+                StartTime = source.StartTime,
+                StopTime = source.StopTime,
+                LocationCity = source.LocationCity,
+                StateProvinceId = source.StateProvinceId,
+                Longitude = source.Longitude,
+                Latitude = source.Latitude,
+                DutyStatusActivityID = source.DutyStatusActivityID,
+                Notes = source.Notes,
+                CreatedBy = source.CreatedBy,
+                CreatedOn = source.CreatedOn,
+                UpdatedBy = source.UpdatedBy,
+                UpdatedOn = source.UpdatedOn
+            };  
+
+            return destination;
+        }
     }
 }

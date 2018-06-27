@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using BTCA.Common.Core;
 
@@ -6,8 +7,10 @@ namespace BTCA.Common.BusinessObjects
 {
     public class DailyLogModel : BaseEntity
     {
+        //private IList<DailyLogDetailModel> _dailyLogDetails = new List<DailyLogDetailModel>();
+
         [Required]
-        public int ID { get; set; }
+        public int LogID { get; set; }
 
         [Required, Display(Name ="Date")]
         public DateTime LogDate { get; set; }        
@@ -40,12 +43,14 @@ namespace BTCA.Common.BusinessObjects
         public string UserName { get; set; }
 
         [MaxLength(30), Display(Name= "First Name")]
-        public virtual string FirstName { get; set; }
+        public string FirstName { get; set; }
 
         [MaxLength(30), Display(Name = "Last Name")]
-        public virtual string LastName { get; set; }
+        public string LastName { get; set; }
 
         [ MaxLength(1), Display(Name = "M.I.")]
-        public virtual string MiddleInitial { get; set; }        
+        public string MiddleInitial { get; set; }
+
+        public IList<DailyLogDetailModel> DailyLogDetails { get; set; } = new List<DailyLogDetailModel>();        
     }
 }
