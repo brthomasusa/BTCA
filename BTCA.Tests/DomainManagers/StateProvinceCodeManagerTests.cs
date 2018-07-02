@@ -78,7 +78,8 @@ namespace BTCA.Tests.DomainManagers
 
                 using (var context = new HOSContext(options))
                 {
-                    HOSTestData.LoadStateProvinceCodeTable(context);                                      
+                    HOSTestData.LoadStateProvinceCodeTable(context);
+                    HOSTestData.CreateViews(context);                                      
                 }
 
                 using (var context = new HOSContext(options))
