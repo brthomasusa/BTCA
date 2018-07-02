@@ -32,7 +32,8 @@ namespace BTCA.Tests.DataAccess
                 using (var context = new HOSContext(options))
                 {
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -86,7 +87,8 @@ namespace BTCA.Tests.DataAccess
                 using (var context = new HOSContext(options))
                 {
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -147,7 +149,8 @@ namespace BTCA.Tests.DataAccess
                 using (var context = new HOSContext(options))
                 {
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context); 
+                    HOSTestData.CreateViews(context);                                    
                 }
 
                 using (var context = new HOSContext(options))
@@ -206,7 +209,8 @@ namespace BTCA.Tests.DataAccess
                 using (var context = new HOSContext(options))
                 {
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -267,6 +271,7 @@ namespace BTCA.Tests.DataAccess
                     HOSTestData.LoadCompanyTable(context);
                     HOSTestData.LoadAppUserTable(context);                                     
                     HOSTestData.LoadDailyLogTable(context);
+                    HOSTestData.CreateViews(context);
                 }
 
                 using (var context = new HOSContext(options))
@@ -298,6 +303,7 @@ namespace BTCA.Tests.DataAccess
 
                 using (var context = new HOSContext(options))
                 {
+                    HOSTestData.CreateViews(context);
                     context.Database.EnsureCreated();
                 }
 
@@ -306,6 +312,7 @@ namespace BTCA.Tests.DataAccess
                     HOSTestData.LoadCompanyTable(context);
                     HOSTestData.LoadAppUserTable(context);                                     
                     HOSTestData.LoadDailyLogTable(context);
+                    
                 }
 
                 using (var context = new HOSContext(options))
@@ -349,7 +356,8 @@ namespace BTCA.Tests.DataAccess
                     HOSTestData.LoadDutyStatusTable(context);
                     HOSTestData.LoadStateProvinceCodeTable(context);
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -424,7 +432,8 @@ namespace BTCA.Tests.DataAccess
                     HOSTestData.LoadDutyStatusTable(context);
                     HOSTestData.LoadStateProvinceCodeTable(context);
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -499,7 +508,8 @@ namespace BTCA.Tests.DataAccess
                     HOSTestData.LoadDutyStatusTable(context);
                     HOSTestData.LoadStateProvinceCodeTable(context);
                     HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadAppUserTable(context);                                     
+                    HOSTestData.LoadAppUserTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -575,7 +585,8 @@ namespace BTCA.Tests.DataAccess
                     HOSTestData.LoadStateProvinceCodeTable(context);
                     HOSTestData.LoadCompanyTable(context);
                     HOSTestData.LoadAppUserTable(context);
-                    HOSTestData.LoadDailyLogTable(context);                                     
+                    HOSTestData.LoadDailyLogTable(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
