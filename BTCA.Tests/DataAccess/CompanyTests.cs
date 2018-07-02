@@ -329,6 +329,44 @@ namespace BTCA.Tests.DataAccess
             } finally {
                 connection.Close();
             }            
+        }
+
+        [Fact]
+        public void Test_CompanyFromSql()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            try {
+
+                var options = new DbContextOptionsBuilder<HOSContext>()
+                    .UseSqlite(connection)
+                    .Options;
+
+                using (var context = new HOSContext(options))
+                {
+                    context.Database.EnsureCreated();
+                }
+
+                using (var context = new HOSContext(options))
+                {
+                    HOSTestData.LoadCompanyTable(context);                                    
+                }
+
+                using (var context = new HOSContext(options))
+                {
+                    IRepository repository = new Repository(context);
+
+                    string sql = "SELECT * FROM Companies WHERE ID = 1";
+                    var btechnical = repository.DBContext.Companies.FromSql(sql).FirstOrDefault();
+
+                    Assert.NotNull(btechnical);
+                    Assert.Equal("ADMIN001", btechnical.CompanyCode);
+                }
+
+            } finally {
+                connection.Close();
+            }             
         }               
     }
 }
