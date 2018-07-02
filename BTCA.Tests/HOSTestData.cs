@@ -1,13 +1,55 @@
 using System;
 using System.Collections.Generic;
-using BTCA.Common.BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 using BTCA.Common.Entities;
 using BTCA.DataAccess.EF;
 
-namespace BTCA.Tests 
+namespace BTCA.Tests
 {
     public static class HOSTestData
     {
+        public static void CreateViews(HOSContext ctx)
+        {
+            ctx.Database.ExecuteSqlCommand(
+                @"CREATE VIEW CompanyAddress
+                AS
+                SELECT A.ID, A.addressline1, A.addressline2, A.city, S.statecode, A.stateprovinceid, A.zipcode, 
+                       S.countrycode, A.ishq, A.companyid, A.CreatedBy, A.CreatedOn, A.UpdatedBy, A.UpdatedOn                    
+                FROM Addresses AS A
+                    JOIN StateProvinceCodes AS S ON A.StateProvinceId = S.ID;"
+            ); 
+
+            ctx.Database.ExecuteSqlCommand(
+                @"CREATE VIEW DailyLogModel
+                  AS
+                    SELECT DL.LogID, DL.LogDate, DL.BeginningMileage, DL.EndingMileage, DL.TruckNumber, DL.TrailerNumber,
+                       DL.IsSigned, DL.DriverID, DL.Notes, U.FirstName, U.LastName, U.MiddleInitial,
+                       DL.CreatedBy, DL.CreatedOn, DL.UpdatedBy, DL.UpdatedOn
+                From DailyLogs DL
+                    JOIN AspNetUsers AS U
+                        ON DL.DriverID = U.Id;"
+            );
+
+            ctx.Database.ExecuteSqlCommand(
+                @"CREATE VIEW DailyLogDetailModel
+                AS
+                SELECT DLD.LogDetailID, DLD.LogID, DLD.DutyStatusID, DS.ShortName, DLD.StartTime, DLD.StopTime, 
+                    DLD.LocationCity, DLD.StateProvinceId, SPC.StateCode,
+                    DLD.DutyStatusActivityID, DSA.Activity, DLD.Notes, DLD.Longitude, DLD.Latitude,
+                    DLD.CreatedBy, DLD.CreatedOn, DLD.UpdatedBy, DLD.UpdatedOn
+                FROM DailyLogDetails AS DLD
+                    JOIN DutyStatuses AS DS
+                        ON DLD.DutyStatusID = DS.DutyStatusID
+                    JOIN StateProvinceCodes AS SPC
+                        ON DLD.StateProvinceId = SPC.ID
+                    JOIN DutyStatusActivities AS DSA
+                        ON DLD.DutyStatusActivityID = DSA.DutyStatusActivityID;"                
+            );
+
+
+
+        } 
+
         public static void LoadDailyLogTable(HOSContext ctx)
         {
             var data = new List<DailyLog> 
@@ -439,7 +481,7 @@ namespace BTCA.Tests
                 new Company {ID = 2, CompanyCode = "FCT001", CompanyName = "First Choice Transport", DOT_Number = "123456", MC_Number = "MC-123456", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
                 new Company {ID = 3, CompanyCode = "SWIFT001", CompanyName = "Swift Transportation", DOT_Number = "937712", MC_Number = "MC-987665", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
                 new Company {ID = 4, CompanyCode = "SWIFT004", CompanyName = "Swift Trans LLC", DOT_Number = "712025", MC_Number = "MC-987665", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
-                new Company {ID = 5, CompanyCode = "GWTM001", CompanyName = "GreatWIDe Truckload Management", DOT_Number = "430147", MC_Number = "MC-014987", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
+                new Company {ID = 5, CompanyCode = "GWTM001", CompanyName = "GreatWide Truckload Management", DOT_Number = "430147", MC_Number = "MC-014987", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
                 new Company {ID = 6, CompanyCode = "CARD001", CompanyName = "Cardinal Logistics", DOT_Number = "703028", MC_Number = "MC-654321", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},                                
                 new Company {ID = 7, CompanyCode = "GWLS001", CompanyName = "Greatwide Logistics Services", DOT_Number = "380085", MC_Number = "MC-665871", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now}
             };

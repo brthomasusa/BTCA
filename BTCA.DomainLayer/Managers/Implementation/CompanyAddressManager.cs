@@ -96,6 +96,10 @@ namespace BTCA.DomainLayer.Managers.Implementation
         {
             try {
 
+                // var addresses = _repository.DBContext.CompanyAddresses
+                //                                     .FromSql(@"SELECT * FROM dbo.CompanyAddressFunc (2)")
+                //                                     .ToList();
+
                 var query = _repository.DBContext.Addresses
                         .Where(c => c.CompanyId == companyId)
                         .AsNoTracking()
@@ -213,6 +217,38 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 throw ex;                 
             }
         }  
+
+        public IEnumerable<CompanyAddress> GetCompanyAddressesRawSql(int companyId)
+        {
+            try {
+
+                // Passes companyId as a parameter to the Table-Valued function dbo.CompanyAddressByCompanyId
+                var query = _repository.DBContext.CompanyAddresses
+                                                    .FromSql($"SELECT * FROM dbo.CompanyAddressByCompanyId ({companyId})"); 
+
+                return query.ToList().OrderBy(c => c.StateCode)
+                                    .ThenBy(c => c.City)
+                                    .ThenBy(c => c.AddressLine1);
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "GetCompanyAddressesRawSql: Retrieval failed for companyId: {0}.", companyId);
+                throw ex;                 
+            }            
+        }
+
+        public CompanyAddress GetCompanyAddressRawSql(int addressId)
+        {
+            try {
+                // Passes addressId as a parameter to the Table-Valued function dbo.CompanyAddressByAddressId
+                var query = _repository.DBContext.CompanyAddresses
+                                                    .FromSql($"SELECT * FROM dbo.CompanyAddressByAddressId ({addressId})");
+                return query.FirstOrDefault();
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "GetCompanyAddressRawSql: Retrieval failed for addressId: {0}.", addressId);
+                throw ex;                 
+            }                        
+        }
 
         private Address MapFromCompanyAddress(CompanyAddress source)
         {

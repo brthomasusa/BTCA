@@ -11,6 +11,9 @@ namespace BTCA.DomainLayer.Managers.Interface
     {
         IEnumerable<CompanyAddress> GetCompanyAddresses(int companyId);
         CompanyAddress GetCompanyAddress(int companyId, int addressId);
-        CompanyAddress GetCompanyAddress(Expression<Func<Address, bool>> expression);        
+        CompanyAddress GetCompanyAddress(Expression<Func<Address, bool>> expression);
+
+        IEnumerable<CompanyAddress> GetCompanyAddressesRawSql(int companyId);
+        CompanyAddress GetCompanyAddressRawSql(int addressId);                
     }
 }

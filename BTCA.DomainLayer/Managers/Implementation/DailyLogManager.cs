@@ -91,7 +91,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 var buffer = dailyLogModel.FirstOrDefault();
                 if (buffer != null) {
-                    LoadDailyLogDetails(buffer);
+                    //LoadDailyLogDetails(buffer);
                 }
 
                 return buffer; 
@@ -371,7 +371,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 {
                     foreach (DailyLogDetailModel detail in dailyLogDetails)
                     {
-                        dailyLogModel.DailyLogDetails.Add(detail);
+                        //dailyLogModel.DailyLogDetails.Add(detail);
                     }
                 }
 

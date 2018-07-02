@@ -21,6 +21,15 @@ namespace BTCA.DataAccess.Core
             return _context.Set<T>().AsQueryable();
         }
 
+        /* 
+            AllQueryType can only with types defined in DbContext
+            using the DbQuery<TQueryType> construct.
+        */
+        public IQueryable<T> AllQueryType<T>() where T : class
+        {
+            return _context.Query<T>().AsQueryable();
+        }
+
         public virtual IEnumerable<T> Filter<T>(Expression<Func<T, bool>> predicate) where T : class
         {            
             return _context.Set<T>().Where<T>(predicate).AsEnumerable<T>();

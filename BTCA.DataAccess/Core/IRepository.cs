@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using BTCA.DataAccess.EF;
 
 namespace BTCA.DataAccess.Core
@@ -10,7 +11,8 @@ namespace BTCA.DataAccess.Core
     public interface IRepository
     {
         HOSContext DBContext { get; }
-        IQueryable<T> All<T>() where T : class;        
+        IQueryable<T> All<T>() where T : class;
+        IQueryable<T> AllQueryType<T>() where T : class;        
         IEnumerable<T> Filter<T>(Expression<Func<T, bool>> predicate) where T : class;        
         T Find<T>(Expression<Func<T, bool>> predicate) where T : class;
         bool Contains<T>(Expression<Func<T, bool>> predicate) where T : class; 

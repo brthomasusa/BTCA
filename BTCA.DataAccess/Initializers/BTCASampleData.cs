@@ -604,6 +604,6 @@ namespace BTCA.DataAccess.Initializers
             };
 
             return data;
-        }   
+        }  
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BTCA.Common.Entities;
+using BTCA.Common.BusinessObjects;
 
 namespace BTCA.DataAccess.EF
 {
@@ -28,6 +29,10 @@ namespace BTCA.DataAccess.EF
         public virtual DbSet<LoadAssignment> LoadAssignments { get; set; }
         public virtual DbSet<DailyLog> DailyLogs { get; set; }
         public virtual DbSet<DailyLogDetail> DailyLogDetails { get; set; }
+
+        public virtual DbQuery<CompanyAddress> CompanyAddresses { get; set; }
+        public virtual DbQuery<DailyLogModel> DailyLogModels { get; set; }
+        public virtual DbQuery<DailyLogDetailModel> DailyLogDetailModels { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -141,9 +146,21 @@ namespace BTCA.DataAccess.EF
 
             modelBuilder.Entity<DailyLogDetail>(entity => 
             {
+                entity.HasIndex(d => d.StartTime)
+                    .HasName("Idx_DailyDetailStartTime");                
+
+                entity.HasIndex(d => d.StopTime)
+                    .HasName("Idx_DailyDetailStopTime");
+
                 entity.Property(dl => dl.StartTime).HasColumnType("smalldatetime");                    
                 entity.Property(dl => dl.StopTime).HasColumnType("smalldatetime");
-            });                                                                  
+            });
+
+            // Mapping BusinessObjects to database Views
+
+            modelBuilder.Query<CompanyAddress>().ToView("CompanyAddress");                                                                  
+            modelBuilder.Query<DailyLogModel>().ToView("DailyLogModel");
+            modelBuilder.Query<DailyLogDetailModel>().ToView("DailyLogDetailModel");
         }                 
     }
 }
