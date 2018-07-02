@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BTCA.Common.Core;
 
 namespace BTCA.Common.BusinessObjects
 {
     public class DailyLogModel : BaseEntity
     {
-        //private IList<DailyLogDetailModel> _dailyLogDetails = new List<DailyLogDetailModel>();
-
         [Required]
         public int LogID { get; set; }
 
@@ -30,9 +29,6 @@ namespace BTCA.Common.BusinessObjects
         [Required, Display(Name = "Signed?")]
         public bool IsSigned { get; set; }
 
-        [Display(Name = "Violations?")]
-        public bool HasViolations { get; set; }
-
         [MaxLength(4000)]
         public string Notes { get; set; }         
 
@@ -51,6 +47,6 @@ namespace BTCA.Common.BusinessObjects
         [ MaxLength(1), Display(Name = "M.I.")]
         public string MiddleInitial { get; set; }
 
-        public IList<DailyLogDetailModel> DailyLogDetails { get; set; } = new List<DailyLogDetailModel>();        
+        //public IList<DailyLogDetailModel> DailyLogDetails { get; set; } = new List<DailyLogDetailModel>();        
     }
 }
