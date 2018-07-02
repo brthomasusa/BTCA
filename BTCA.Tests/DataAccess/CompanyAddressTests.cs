@@ -32,7 +32,8 @@ namespace BTCA.Tests.DataAccess
                 using (var context = new HOSContext(options))
                 {
                     HOSTestData.LoadCompanyTable(context); 
-                    HOSTestData.LoadStateProvinceCodeTable(context);                                    
+                    HOSTestData.LoadStateProvinceCodeTable(context);
+                    HOSTestData.CreateViews(context);                                    
                 }
 
                 using (var context = new HOSContext(options))
@@ -87,7 +88,8 @@ namespace BTCA.Tests.DataAccess
                 {
                     HOSTestData.LoadCompanyTable(context);
                     HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.LoadCompanyAddresses(context);                                     
+                    HOSTestData.LoadCompanyAddresses(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -144,7 +146,8 @@ namespace BTCA.Tests.DataAccess
                 {
                     HOSTestData.LoadCompanyTable(context);
                     HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.LoadCompanyAddresses(context);                                     
+                    HOSTestData.LoadCompanyAddresses(context);
+                    HOSTestData.CreateViews(context);                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -191,7 +194,8 @@ namespace BTCA.Tests.DataAccess
                 {
                     HOSTestData.LoadCompanyTable(context);
                     HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.LoadCompanyAddresses(context);                                       
+                    HOSTestData.LoadCompanyAddresses(context); 
+                    HOSTestData.CreateViews(context);                                      
                 }
 
                 using (var context = new HOSContext(options))
@@ -205,6 +209,48 @@ namespace BTCA.Tests.DataAccess
             } finally {
                 connection.Close();
             }
-        }                              
+        }
+
+        [Fact]
+        public void Test_CompanyAddressesUsingView()
+        {
+            var connection = new SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            try {
+
+                var options = new DbContextOptionsBuilder<HOSContext>()
+                    .UseSqlite(connection)
+                    .Options;
+
+                using (var context = new HOSContext(options))
+                {
+                    context.Database.EnsureCreated();
+                }
+
+                using (var context = new HOSContext(options))
+                {
+                    HOSTestData.LoadCompanyTable(context);
+                    HOSTestData.LoadStateProvinceCodeTable(context);
+                    HOSTestData.LoadCompanyAddresses(context);
+                    HOSTestData.CreateViews(context);                                       
+                }
+
+                using (var context = new HOSContext(options))
+                {
+                    IRepository repository = new Repository(context);
+                    var queryByCompanyId = repository.DBContext.CompanyAddresses.Where(ca => ca.CompanyId == 2).ToList();
+                    Assert.NotEmpty(queryByCompanyId);
+                    Assert.Equal(2, queryByCompanyId.Count());
+
+                    var addresses = repository.DBContext.CompanyAddresses.ToList();
+                    Assert.NotEmpty(addresses);
+                    Assert.Equal(6, addresses.Count());                                                       
+                }
+
+            } finally {
+                connection.Close();
+            }
+        }                                       
     }
 }
