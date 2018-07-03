@@ -19,8 +19,7 @@ namespace BTCA.Common.Core
         public BaseEntity()
         {
             this.CreatedOn = DateTime.Now;
-            this.UpdatedOn = DateTime.Now;
-            this.State = (int)EntityState.New;            
+            this.UpdatedOn = DateTime.Now;           
         }
 
 

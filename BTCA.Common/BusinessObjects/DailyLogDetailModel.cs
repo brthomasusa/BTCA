@@ -18,7 +18,7 @@ namespace BTCA.Common.BusinessObjects
         public int DutyStatusID { get; set; }
 
         [Display(Name = "Duty Status")]
-        public string DutyStatusShortName { get; set; }
+        public string ShortName { get; set; }
 
         [Required, Display(Name = "Start")]
         public DateTime StartTime { get; set; }
@@ -27,7 +27,7 @@ namespace BTCA.Common.BusinessObjects
         public DateTime StopTime { get; set; }
 
         [Display(Name = "Total Time")]
-        public TimeSpan ElapseTime { get; set; }
+        public int ElapseTime { get; set; }
 
         [Required, Display(Name = "City")]
         public string LocationCity { get; set; }
@@ -45,7 +45,7 @@ namespace BTCA.Common.BusinessObjects
         public int DutyStatusActivityID { get; set; }
 
         [Display(Name = "Activity")]
-        public string DutyStatusActivity { get; set; }
+        public string Activity { get; set; }
 
         public string Notes { get; set; }        
     }

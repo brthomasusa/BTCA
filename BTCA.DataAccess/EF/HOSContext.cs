@@ -152,8 +152,8 @@ namespace BTCA.DataAccess.EF
                 entity.HasIndex(d => d.StopTime)
                     .HasName("Idx_DailyDetailStopTime");
 
-                entity.Property(dl => dl.StartTime).HasColumnType("smalldatetime");                    
-                entity.Property(dl => dl.StopTime).HasColumnType("smalldatetime");
+                entity.Property(dl => dl.StartTime).HasColumnType("datetime");                    
+                entity.Property(dl => dl.StopTime).HasColumnType("datetime");
             });
 
             // Mapping BusinessObjects to database Views
