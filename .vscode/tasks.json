@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/BTCA.DataAccess/BTCA.DataAccess.csproj"
+                "${workspaceFolder}/BTCA.WebApi/BTCA.WebApi.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
