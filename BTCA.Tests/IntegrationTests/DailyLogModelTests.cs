@@ -10,7 +10,7 @@ using BTCA.DomainLayer.Managers.Interface;
 using BTCA.DomainLayer.Managers.Implementation;
 using BTCA.DataAccess.Initializers;
 
-namespace BTCA.Tests.RawSqlDataAccess
+namespace BTCA.Tests.IntegrationTests
 {
     public class DailyLogTests : IDisposable
     {

@@ -19,7 +19,7 @@ using BTCA.DomainLayer.Managers.Interface;
 using BTCA.DataAccess.Core;
 using BTCA.WebApi.Controllers;
 
-namespace BTCA.Tests.WebApiService
+namespace BTCA.Tests.UnitTests
 {
     public class StatesControllerTests : BaseTestClass
     {

@@ -8,7 +8,7 @@ using BTCA.DataAccess.EF;
 using BTCA.DomainLayer.Managers.Interface;
 using BTCA.DomainLayer.Managers.Implementation;
 
-namespace BTCA.Tests.RawSqlDataAccess
+namespace BTCA.Tests.IntegrationTests
 {
     public class CompanyAddressTests
     {

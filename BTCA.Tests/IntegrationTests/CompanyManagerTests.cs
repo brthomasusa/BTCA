@@ -9,7 +9,7 @@ using BTCA.DataAccess.EF;
 using BTCA.DomainLayer.Managers.Interface;
 using BTCA.DomainLayer.Managers.Implementation;
 
-namespace BTCA.Tests.DomainManagers
+namespace BTCA.Tests.IntegrationTests
 {
     public class CompanyManagerTests
     {
