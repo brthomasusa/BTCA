@@ -32,25 +32,30 @@ namespace BTCA.Tests.DomainManagers
 
                 using (var context = new HOSContext(options))
                 {
+                    HOSTestData.LoadCompanyTable(context);                                      
+                }                
+
+                using (var context = new HOSContext(options))
+                {
                     ICompanyManager companyMgr = new CompanyManager(new Repository(context));
                     
                     var company = new Company()
                     {
-                        ID = 1,
-                        CompanyCode = "FCT001",
-                        CompanyName = "First Choice Transport",
+                        ID = 8,
+                        CompanyCode = "TEST001",
+                        CompanyName = "Testing Transportation, Inc",
                         DOT_Number = "951560",
                         MC_Number = "MC-407377",
                         CreatedBy = "admin",
-                        CreatedOn = DateTime.Now,
+                        CreatedOn = new DateTime(2016,10,10,8,30,0),
                         UpdatedBy = "admin",
-                        UpdatedOn = DateTime.Now
+                        UpdatedOn = new DateTime(2016,10,10,8,30,0)
                     };
 
                     companyMgr.Create(company);
                     companyMgr.SaveChanges();
 
-                    var test = companyMgr.GetCompany(c => c.CompanyCode == "FCT001");
+                    var test = companyMgr.GetCompany(c => c.CompanyCode == "TEST001");
                     Assert.NotNull(test);
                     Assert.Equal(company.CompanyCode, test.CompanyCode);
                 }
@@ -79,34 +84,25 @@ namespace BTCA.Tests.DomainManagers
 
                 using (var context = new HOSContext(options))
                 {
+                    HOSTestData.LoadCompanyTable(context);                                      
+                } 
+
+                using (var context = new HOSContext(options))
+                {
                     ICompanyManager companyMgr = new CompanyManager(new Repository(context));
                     
-                    var company = new Company()
-                    {
-                        CompanyCode = "FCT001",
-                        CompanyName = "First Choice Transport",
-                        DOT_Number = "951560",
-                        MC_Number = "MC-407377",
-                        CreatedBy = "admin",
-                        CreatedOn = DateTime.Now,
-                        UpdatedBy = "admin",
-                        UpdatedOn = DateTime.Now
-                    };
-
-                    companyMgr.Create(company);
-                    companyMgr.SaveChanges();
-
-                    var test = companyMgr.GetCompany(c => c.CompanyCode == "FCT001");
-                    Assert.NotNull(test);
-                    Assert.Equal(company.CompanyCode, test.CompanyCode);
-
-                    company.CompanyName = "First Choice Transport, Inc";
-                    company.UpdatedOn = DateTime.Now;
+                    var company = companyMgr.GetCompany(co => co.CompanyCode == "GWLS001");
+                    Assert.NotNull(company);
+                    
+                    var updateTime = DateTime.Now;
+                    company.UpdatedOn = updateTime;
                     companyMgr.Update(company);
                     companyMgr.SaveChanges();
 
-                    test = companyMgr.GetCompany(c => c.CompanyCode == "FCT001");
-                    Assert.Equal("First Choice Transport, Inc", test.CompanyName);
+                    company = companyMgr.GetCompany(co => co.CompanyCode == "GWLS001");
+                    Assert.NotNull(company);
+                    Assert.Equal(updateTime, company.UpdatedOn);
+
                 }
 
             } finally {

@@ -79,7 +79,7 @@ namespace BTCA.Tests.DomainManagers
                 using (var context = new HOSContext(options))
                 {
                     HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.CreateViews(context);                                      
+                                     
                 }
 
                 using (var context = new HOSContext(options))
@@ -93,9 +93,9 @@ namespace BTCA.Tests.DomainManagers
                     stateCodeMgr.Update(stateCode);
                     stateCodeMgr.SaveChanges();
 
-                    var test = stateCodeMgr.GetStateProvinceCode(state => state.StateCode == "AK");
-                    Assert.NotNull(test);
-                    Assert.Equal(currentTimestamp, test.UpdatedOn);
+                    stateCode = stateCodeMgr.GetStateProvinceCode(state => state.StateCode == "AK");
+                    Assert.NotNull(stateCode);
+                    Assert.Equal(currentTimestamp, stateCode.UpdatedOn);
                 }
 
             } finally {

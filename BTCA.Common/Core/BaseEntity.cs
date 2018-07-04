@@ -12,7 +12,6 @@ namespace BTCA.Common.Core
         
         public virtual string UpdatedBy { get; set; }
         
-        [ConcurrencyCheck]
         public virtual DateTime UpdatedOn { get; set; }
         
         [NotMapped]
