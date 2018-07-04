@@ -41,34 +41,8 @@ namespace BTCA.DataAccess.EF
             if (!optionsBuilder.IsConfigured)
             {
                 var connection = @"Server=tcp:localhost,1433;Database=BTCAv1;User ID=sa;Password=Info99Gum;Connection Timeout=30";
-                optionsBuilder.UseSqlServer(connection, options => options.EnableRetryOnFailure());
-            }
-        }
-
-        public static async Task CreateAdminAccount(IServiceProvider serviceProvider, IConfiguration configuration)
-        {
-            UserManager<AppUser> userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
-            RoleManager<AppRole> roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
-
-            string username = configuration["Data:AdminUser:Name"];
-            string email = configuration["Data:AdminUser:Email"];
-            string password = configuration["Data:AdminUser:Password"];
-            string role = configuration["Data:AdminUser:Role"];
-
-            if (await userManager.FindByNameAsync(username) == null)
-            {
-                if (await roleManager.FindByNameAsync(role) == null)
-                {
-                    await roleManager.CreateAsync(new AppRole(role));
-                }
-
-                AppUser user = new AppUser { UserName = username, Email = email, CompanyID = 1 };
-
-                IdentityResult result = await userManager.CreateAsync(user, password);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(user, role);
-                }
+                optionsBuilder.UseSqlServer(connection, options => options.EnableRetryOnFailure())
+                              .EnableSensitiveDataLogging();
             }
         }
 
