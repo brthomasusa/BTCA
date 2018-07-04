@@ -18,7 +18,9 @@ namespace BTCA.Common.Entities
         [ForeignKey(nameof(StateProvinceId))]
 
         public virtual StateProvinceCode StateProvinceCode { get; set; }
+        [Column(TypeName="decimal(10,7)")]
         public virtual decimal Latitude { get; set; }
+        [Column(TypeName="decimal(10,7)")]
         public virtual decimal Longitude { get; set; }
     }
 }

@@ -22,8 +22,10 @@ namespace BTCA.Common.Entities
         [Required, MaxLength(35), Display(Name = "Location")]
         public virtual string LocationCity { get; set; }
 
+        [Column(TypeName="decimal(10,7)")]
         public virtual decimal Longitude { get; set; }
 
+        [Column(TypeName="decimal(10,7)")]
         public virtual decimal Latitude { get; set; }
 
         public virtual string Notes { get; set; }

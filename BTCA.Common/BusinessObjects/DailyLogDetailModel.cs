@@ -37,9 +37,10 @@ namespace BTCA.Common.BusinessObjects
 
         [Display(Name = "State")]
         public string StateCode { get; set; }
-
+        [Column(TypeName="decimal(10,7)")]
         public decimal Longitude { get; set; }
 
+        [Column(TypeName="decimal(10,7)")]
         public decimal Latitude { get; set; }
         
         public int DutyStatusActivityID { get; set; }
