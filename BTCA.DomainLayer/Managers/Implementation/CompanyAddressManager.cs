@@ -22,7 +22,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             _repository = repo;
         }
 
-        public void Create(BaseEntity entity)
+        public virtual void Create(BaseEntity entity)
         {            
             try {
 
@@ -37,7 +37,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
-        public void Update(BaseEntity entity)
+        public virtual void Update(BaseEntity entity)
         {
             try {
 
@@ -52,7 +52,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
-        public void Delete(BaseEntity entity)
+        public virtual void Delete(BaseEntity entity)
         {
             try {
 
@@ -67,7 +67,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
-        public void SaveChanges()
+        public virtual void SaveChanges()
         {
             try {
 
@@ -79,7 +79,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }            
         } 
 
-        public IEnumerable<BaseEntity> GetAll()
+        public virtual IEnumerable<BaseEntity> GetAll()
         {
             try {
                 
@@ -92,7 +92,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }            
         }
 
-        public IEnumerable<CompanyAddress> GetCompanyAddresses(int companyId)
+        public virtual IEnumerable<CompanyAddress> GetCompanyAddresses(int companyId)
         {
             try {
 
@@ -137,7 +137,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         } 
 
-        public CompanyAddress GetCompanyAddress(int companyId, int addressId)
+        public virtual CompanyAddress GetCompanyAddress(int companyId, int addressId)
         {
             try {
 
@@ -178,7 +178,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
-        public CompanyAddress GetCompanyAddress(Expression<Func<Address, bool>> expression)
+        public virtual CompanyAddress GetCompanyAddress(Expression<Func<Address, bool>> expression)
         {
             try {
 
@@ -218,7 +218,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }  
 
-        public IEnumerable<CompanyAddress> GetCompanyAddressesRawSql(int companyId)
+        public virtual IEnumerable<CompanyAddress> GetCompanyAddressesRawSql(int companyId)
         {
             try {
 
@@ -236,7 +236,7 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }            
         }
 
-        public CompanyAddress GetCompanyAddressRawSql(int addressId)
+        public virtual CompanyAddress GetCompanyAddressRawSql(int addressId)
         {
             try {
                 // Passes addressId as a parameter to the Table-Valued function dbo.CompanyAddressByAddressId

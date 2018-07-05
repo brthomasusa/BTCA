@@ -16,7 +16,7 @@ namespace BTCA.DataAccess.Core
 
         public Repository(HOSContext ctx) => _context = ctx;
 
-        public IQueryable<T> All<T>() where T : class
+        public virtual IQueryable<T> All<T>() where T : class
         {
             return _context.Set<T>().AsQueryable();
         }
@@ -25,7 +25,7 @@ namespace BTCA.DataAccess.Core
             AllQueryType can only with types defined in DbContext
             using the DbQuery<TQueryType> construct.
         */
-        public IQueryable<T> AllQueryType<T>() where T : class
+        public virtual IQueryable<T> AllQueryType<T>() where T : class
         {
             return _context.Query<T>().AsQueryable();
         }
@@ -71,7 +71,7 @@ namespace BTCA.DataAccess.Core
                 _context.Set<T>().Remove(obj);
         }
 
-        public bool Contains<T>(Expression<Func<T, bool>> predicate) where T : class
+        public virtual bool Contains<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             return _context.Set<T>().Count<T>(predicate) > 0;
         }
@@ -88,7 +88,7 @@ namespace BTCA.DataAccess.Core
             }            
         } 
 
-        public void Save()
+        public virtual void Save()
         {
             try {
 
@@ -101,7 +101,7 @@ namespace BTCA.DataAccess.Core
                          
         } 
 
-        public HOSContext DBContext
+        public virtual HOSContext DBContext
         {
             get { return _context; }
         } 
