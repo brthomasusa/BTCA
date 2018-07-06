@@ -54,9 +54,8 @@ namespace BTCA.DataAccess.Core
         {
             try
             {
-               var entry = _context.Entry(TObject);
-               _context.Set<T>().Attach(TObject);
-               entry.State = EntityState.Modified;
+                _context.Set<T>().Attach(TObject);
+                _context.SetModified(TObject);
             }
             catch (Exception ex) {
                 _logger.Error(ex, ex.Message);

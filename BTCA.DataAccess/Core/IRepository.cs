@@ -19,7 +19,7 @@ namespace BTCA.DataAccess.Core
         void Create<T>(T TObject) where T : class;
         void Delete<T>(T TObject) where T : class;
         void Delete<T>(Expression<Func<T, bool>> predicate) where T : class;
-        void Update<T>(T TObject) where T : class;        
+        void Update<T>(T TObject) where T : class;      
         void Save(); 
         void ExecuteProcedure(string procedureCommand, params SqlParameter[] sqlParams); 
      

@@ -20,6 +20,13 @@ namespace BTCA.DataAccess.EF
         {
         }        
 
+        public virtual void SetModified(object entity)
+        {
+            var entry = this.Entry(entity);
+            entry.State = EntityState.Modified;
+            // Entry(entity).State = EntityState.Modified;
+        }
+        
         public virtual DbSet<StateProvinceCode> StateProvinceCodes { get; set; }
         public virtual DbSet<Company> Companies { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }

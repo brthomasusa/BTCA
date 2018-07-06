@@ -1,22 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Moq;
-using BTCA.Common.Core;
 using BTCA.Common.Entities;
-using BTCA.Common.BusinessObjects;
-using BTCA.DomainLayer.Managers.Implementation;
 using BTCA.DomainLayer.Managers.Interface;
-using BTCA.DataAccess.Core;
 using BTCA.WebApi.Controllers;
 
 namespace BTCA.Tests.UnitTests
@@ -54,7 +45,9 @@ namespace BTCA.Tests.UnitTests
             var factory = serviceProvider.GetService<ILoggerFactory>();
             var logger = factory.CreateLogger<StatesController>();
 
-            var controller = new StatesController(mockStateCodeMgr.Object, logger);            
+            var controller = new StatesController(mockStateCodeMgr.Object, logger); 
+
+            var result = controller.GetById(1);           
         }
 
         private IEnumerable<StateProvinceCode> GetTestStateProvinceCodes()
