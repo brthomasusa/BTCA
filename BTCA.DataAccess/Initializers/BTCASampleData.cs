@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using BTCA.Common.Entities;
-using BTCA.DataAccess.EF;
 
 namespace BTCA.DataAccess.Initializers
 {

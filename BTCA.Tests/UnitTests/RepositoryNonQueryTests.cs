@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Moq;
@@ -42,8 +41,11 @@ namespace BTCA.Tests.UnitTests
               
             var mockContext = new Mock<HOSContext>(); 
             mockContext.Setup(c => c.Set<Company>()).Returns(mockSet.Object);
+            
             // Setup HOSContext.SetModified to do nothing ...
-            mockContext.Setup(c => c.SetModified(It.IsAny<Company>())).Callback(() => methodInvocation++);
+            mockContext.Setup(c => c.SetModified(It.IsAny<Company>()))
+                    .Callback(() => methodInvocation++);
+
             mockContext.Setup(c => c.SaveChanges()).Returns(1); 
 
             var repository = new Repository(mockContext.Object);
@@ -60,8 +62,7 @@ namespace BTCA.Tests.UnitTests
         public void DeleteCompany_delete_a_company_via_context() 
         {
             // Testing BTCA.DataAccess.Core.IRepository.Delete() (delete 1 entity obj)
-            var mockSet = new Mock<DbSet<Company>>();
-              
+            var mockSet = new Mock<DbSet<Company>>();              
             var mockContext = new Mock<HOSContext>(); 
             mockContext.Setup(c => c.Set<Company>()).Returns(mockSet.Object); 
             mockContext.Setup(c => c.SaveChanges()).Returns(1); 
@@ -78,12 +79,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "Repository")]
         public void DeleteCompany_delete_multiple_companies_via_context() 
         {
-            var mockSet = new Mock<DbSet<Company>>();
-            mockSet.As<IQueryable<Company>>().Setup(m => m.Provider).Returns(GetCompanies().Provider);
-            mockSet.As<IQueryable<Company>>().Setup(m => m.Expression).Returns(GetCompanies().Expression);
-            mockSet.As<IQueryable<Company>>().Setup(m => m.ElementType).Returns(GetCompanies().ElementType);
-            mockSet.As<IQueryable<Company>>().Setup(m => m.GetEnumerator()).Returns(GetCompanies().GetEnumerator());
-
+            var mockSet = LoadCompanyMockSet();
             var mockContext = new Mock<HOSContext>();
             mockContext.Setup(c => c.Set<Company>()).Returns(mockSet.Object);   
 
@@ -94,6 +90,18 @@ namespace BTCA.Tests.UnitTests
             mockSet.Verify(m => m.Remove(It.IsAny<Company>()), Times.Exactly(7)); 
             mockContext.Verify(m => m.SaveChanges(), Times.Once());                        
         }
+
+        private Mock<DbSet<Company>> LoadCompanyMockSet()
+        {
+            var mockSet = new Mock<DbSet<Company>>();
+            mockSet.As<IQueryable<Company>>().Setup(m => m.Provider).Returns(GetCompanies().Provider);
+            mockSet.As<IQueryable<Company>>().Setup(m => m.Expression).Returns(GetCompanies().Expression);
+            mockSet.As<IQueryable<Company>>().Setup(m => m.ElementType).Returns(GetCompanies().ElementType);
+            mockSet.As<IQueryable<Company>>().Setup(m => m.GetEnumerator()).Returns(GetCompanies().GetEnumerator());
+
+            return mockSet;            
+        }
+
         private Company GetOneCompany() =>
             new Company 
             {

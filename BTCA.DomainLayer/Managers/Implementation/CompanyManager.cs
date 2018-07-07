@@ -22,7 +22,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
         {
             try {
                 
-                return _repository.DBContext.Companies.AsNoTracking().AsEnumerable();
+                var companies = _repository.Filter<Company>(expression);
+                return companies.OrderBy(c => c.CompanyName);
 
             } catch (Exception ex) {
                 _logger.Error(ex, "GetCompanies: Operation failed using expression {0}", expression);
@@ -33,10 +34,11 @@ namespace BTCA.DomainLayer.Managers.Implementation
         public IEnumerable<BaseEntity> GetAll()
         {
             try {
+                return _repository.All<Company>()
+                                  .AsNoTracking()
+                                  .AsEnumerable()
+                                  .OrderBy(c => c.CompanyName);
 
-                return _repository.DBContext.Companies
-                        .AsNoTracking()
-                        .OrderBy(c => c.CompanyName);
 
             } catch (Exception ex) {
                 _logger.Error(ex, "GetAll: Failed to retrieve companies.");

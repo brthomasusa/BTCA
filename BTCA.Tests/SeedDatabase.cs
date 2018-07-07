@@ -1,13 +1,7 @@
 using System;
-using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
-using BTCA.Common.BusinessObjects;
-using BTCA.DataAccess.Core;
 using BTCA.DataAccess.EF;
-using BTCA.DomainLayer.Managers.Interface;
-using BTCA.DomainLayer.Managers.Implementation;
 using BTCA.DataAccess.Initializers;
 
 namespace BTCA.Tests

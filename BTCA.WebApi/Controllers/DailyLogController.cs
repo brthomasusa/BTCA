@@ -15,7 +15,6 @@ namespace BTCA.WebApi.Controllers
     {
         private readonly ILogger<DailyLogController> _logger;
         private IDailyLogManager _logMgr;
-        private ICompanyAddressManager _addressMgr;
 
         public DailyLogController(IDailyLogManager logMgr, ILogger<DailyLogController> logger)
         {
