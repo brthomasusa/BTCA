@@ -13,7 +13,7 @@ namespace BTCA.Tests.UnitTests
     public class RepositoryNonQueryTests
     {
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void CreateCompany_saves_a_company_via_context()
         {
             // Testing BTCA.DataAccess.Core.IRepository.Create()
@@ -32,7 +32,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void UpdateCompany_update_a_company_via_context()  
         {
             // Testing BTCA.DataAccess.Core.IRepository.Update()
@@ -58,7 +58,7 @@ namespace BTCA.Tests.UnitTests
         }   
 
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void DeleteCompany_delete_a_company_via_context() 
         {
             // Testing BTCA.DataAccess.Core.IRepository.Delete() (delete 1 entity obj)
@@ -76,7 +76,7 @@ namespace BTCA.Tests.UnitTests
         }          
 
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void DeleteCompany_delete_multiple_companies_via_context() 
         {
             var mockSet = LoadCompanyMockSet();

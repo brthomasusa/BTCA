@@ -14,6 +14,7 @@ namespace BTCA.Tests.IntegrationTests
     public class CompanyManagerTests
     {
         [Fact]
+        [Trait("Category", "Integration")]
         public void Test_CompanyMgr_CompanyInsert()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -66,6 +67,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
         public void Test_CompanyMgr_CompanyUpdate()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -111,6 +113,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
         public void Test_CompanyMgr_CompanyDelete()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -162,6 +165,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
         public void Test_CompanyMgr_GetAll()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -197,6 +201,7 @@ namespace BTCA.Tests.IntegrationTests
         }        
 
         [Fact]
+        [Trait("Category", "Integration")]
         public void Test_CompanyMgr_GetCompanies()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -228,7 +233,7 @@ namespace BTCA.Tests.IntegrationTests
                                     .ToList();
 
                     Assert.NotNull(companies);
-                    Assert.Equal(7, companies.Count());  
+                    Assert.Equal(2, companies.Count());  
                 }
 
             } finally {

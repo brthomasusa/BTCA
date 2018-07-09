@@ -15,6 +15,7 @@ namespace BTCA.Tests.UnitTests
     public class StatesControllerTests : BaseTestClass
     {
         [Fact]
+        [Trait("Category", "UnitTest.WebApiControllers")]
         public void Index_Returns_ViewResult_ListOfStateCodes()
         {
             var mockStateCodeMgr = new Mock<IStateProvinceCodeManager>();
@@ -36,6 +37,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
+        [Trait("Category", "UnitTest.WebApiControllers")]
         public void Index_Returns_ViewResult_1_StateCode()
         {
             var mockStateCodeMgr = new Mock<IStateProvinceCodeManager>();

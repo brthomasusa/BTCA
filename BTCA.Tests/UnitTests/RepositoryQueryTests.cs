@@ -30,7 +30,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void GetListOfCompanies_UsingRepoFilterFunc()
         {
             var mockSet = LoadCompanyMockSet();
@@ -45,7 +45,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void GetOneCompany_UsingRepoFindFunc()
         {
             var mockSet = LoadCompanyMockSet();
@@ -60,7 +60,7 @@ namespace BTCA.Tests.UnitTests
         }
         
         [Fact]
-        [Trait("Category", "Repository")]
+        [Trait("Category", "UnitTest.Repository")]
         public void GetAllDailyLogs_As_DbQuery()
         {
             var mockSet = LoadDailyLogMockSet();

@@ -26,12 +26,12 @@ namespace BTCA.DataAccess.Initializers
             ExecuteDeleteSql(context, "DailyLogDetails");
             ExecuteDeleteSql(context, "DailyLogs");
             ExecuteDeleteSql(context, "Addresses");
+            ExecuteDeleteSql(context, "AspNetRoles");
+            ExecuteDeleteSql(context, "AspNetUsers");             
             ExecuteDeleteSql(context, "Companies");
             ExecuteDeleteSql(context, "DutyStatuses");
             ExecuteDeleteSql(context, "DutyStatusActivities");
-            ExecuteDeleteSql(context, "StateProvinceCodes");
-            ExecuteDeleteSql(context, "AspNetRoles");
-            ExecuteDeleteSql(context, "AspNetUsers");            
+            ExecuteDeleteSql(context, "StateProvinceCodes");           
             ResetIdentity(context);
         }
 

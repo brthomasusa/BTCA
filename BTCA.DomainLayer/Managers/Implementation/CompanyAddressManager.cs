@@ -82,9 +82,10 @@ namespace BTCA.DomainLayer.Managers.Implementation
         public virtual IEnumerable<BaseEntity> GetAll()
         {
             try {
-                
-                // Return readonly results by turning off ChangeTracking
-                return _repository.DBContext.Addresses.AsNoTracking().AsEnumerable();
+                    return _repository.AllQueryType<CompanyAddress>().AsEnumerable()
+                                                                     .OrderBy(ca => ca.StateCode)
+                                                                     .ThenBy(ca => ca.City)
+                                                                     .ThenBy(ca => ca.AddressLine1);
 
             } catch (Exception ex) {
                 _logger.Error(ex, "GetAll: Retrieval of all addresses failed");
@@ -96,159 +97,47 @@ namespace BTCA.DomainLayer.Managers.Implementation
         {
             try {
 
-                // var addresses = _repository.DBContext.CompanyAddresses
-                //                                     .FromSql(@"SELECT * FROM dbo.CompanyAddressFunc (2)")
-                //                                     .ToList();
-
-                var query = _repository.DBContext.Addresses
-                        .Where(c => c.CompanyId == companyId)
-                        .AsNoTracking()
-                        .AsQueryable();
-                                    
-                var companyAddresses = from address in query
-                                        join stateCodes 
-                                        in _repository.DBContext.StateProvinceCodes.AsNoTracking()
-                                        on address.StateProvinceId equals stateCodes.ID
-                                        select new CompanyAddress
-                                        {
-                                            ID = address.ID,
-                                            AddressLine1 = address.AddressLine1,
-                                            AddressLine2 = address.AddressLine2,
-                                            City = address.City,
-                                            StateProvinceId = stateCodes.ID,
-                                            StateCode = stateCodes.StateCode,
-                                            Zipcode = address.Zipcode,
-                                            CountryCode = stateCodes.CountryCode,
-                                            CompanyId = address.CompanyId,
-                                            IsHQ = address.IsHQ,
-                                            CreatedBy = address.CreatedBy,
-                                            CreatedOn = address.CreatedOn,
-                                            UpdatedBy = address.UpdatedBy,
-                                            UpdatedOn = address.UpdatedOn
-                                        };
-
-                return companyAddresses.OrderBy(address => address.StateCode)
-                                        .ThenBy(address => address.City)
-                                        .ThenBy(address => address.AddressLine1);
+                // dbo.CompanyAddressByCompanyId is a table-valued function
+                return _repository.DBContext.CompanyAddresses
+                                            .FromSql($"SELECT * FROM dbo.CompanyAddressByCompanyId ({companyId})")
+                                            .ToList()
+                                            .OrderBy(address => address.StateCode)
+                                            .ThenBy(address => address.City)
+                                            .ThenBy(address => address.AddressLine1);
 
             } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddresses: Retrieval of addresses with company Id {CompanyId} failed", companyId);
+                _logger.Error(ex, "GetCompanyAddresses: Retrieval of addresses with company Id {0} failed", companyId);
                 throw ex;
             }
         } 
 
-        public virtual CompanyAddress GetCompanyAddress(int companyId, int addressId)
+        public virtual CompanyAddress GetCompanyAddress(int addressId)
         {
             try {
 
-                // Have to use DBContext directly in order to turn off ChangeTracking
-                var query = _repository.DBContext.Addresses
-                        .Where(a => a.CompanyId == companyId && a.ID == addressId)
-                        .AsNoTracking()
-                        .AsQueryable();
-                
-                        
-                var companyAddress = from address in query
-                                        join stateCodes 
-                                        in _repository.DBContext.StateProvinceCodes.AsNoTracking()
-                                        on address.StateProvinceId equals stateCodes.ID
-                                        select new CompanyAddress
-                                        {
-                                            ID = addressId,
-                                            AddressLine1 = address.AddressLine1,
-                                            AddressLine2 = address.AddressLine2,
-                                            City = address.City,
-                                            StateProvinceId = address.StateProvinceId,
-                                            StateCode = stateCodes.StateCode,
-                                            Zipcode = address.Zipcode,
-                                            CountryCode = stateCodes.CountryCode,
-                                            IsHQ = address.IsHQ,
-                                            CompanyId = companyId,
-                                            CreatedBy = address.CreatedBy,
-                                            CreatedOn = address.CreatedOn,
-                                            UpdatedBy = address.UpdatedBy,
-                                            UpdatedOn = address.UpdatedOn
-                                        };
+                // dbo.CompanyAddressByCompanyId is a table-valued function
+                var companyAddress = _repository.DBContext.CompanyAddresses
+                                                    .FromSql($"SELECT * FROM dbo.CompanyAddressByAddressId ({addressId})");
 
                 return companyAddress.SingleOrDefault();
 
             } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddress: Retrieval of address with company Id {CompanyId} failed", companyId);
+                _logger.Error(ex, "GetCompanyAddress: Retrieval of address with address Id {0} failed", addressId);
                 throw ex;                
             }
         }
 
-        public virtual CompanyAddress GetCompanyAddress(Expression<Func<Address, bool>> expression)
+        public virtual CompanyAddress GetCompanyAddress(Expression<Func<CompanyAddress, bool>> expression)
         {
             try {
 
-                // Have to use DBContext directly in order to turn off ChangeTracking
-                var query = _repository.DBContext.Addresses
-                        .Where(expression)
-                        .AsNoTracking()
-                        .AsQueryable();
-
-                var companyAddress = from address in query
-                                        join stateCodes 
-                                        in _repository.DBContext.StateProvinceCodes.AsNoTracking()
-                                        on address.StateProvinceId equals stateCodes.ID
-                                        select new CompanyAddress
-                                        {
-                                            ID = address.ID,
-                                            AddressLine1 = address.AddressLine1,
-                                            AddressLine2 = address.AddressLine2,
-                                            City = address.City,
-                                            StateProvinceId = stateCodes.ID,
-                                            StateCode = stateCodes.StateCode,
-                                            Zipcode = address.Zipcode,
-                                            CountryCode = stateCodes.CountryCode,
-                                            IsHQ = address.IsHQ,
-                                            CompanyId = address.CompanyId,
-                                            CreatedBy = address.CreatedBy,
-                                            CreatedOn = address.CreatedOn,
-                                            UpdatedBy = address.UpdatedBy,
-                                            UpdatedOn = address.UpdatedOn
-                                        };
-
-                return companyAddress.SingleOrDefault();
+                return _repository.AllQueryType<CompanyAddress>().Where(expression).SingleOrDefault();
 
             } catch (Exception ex) {
                 _logger.Error(ex, "GetCompanyAddress: Retrieval of address with expression {0}.", expression);
                 throw ex;                 
             }
         }  
-
-        public virtual IEnumerable<CompanyAddress> GetCompanyAddressesRawSql(int companyId)
-        {
-            try {
-
-                // Passes companyId as a parameter to the Table-Valued function dbo.CompanyAddressByCompanyId
-                var query = _repository.DBContext.CompanyAddresses
-                                                    .FromSql($"SELECT * FROM dbo.CompanyAddressByCompanyId ({companyId})"); 
-
-                return query.ToList().OrderBy(c => c.StateCode)
-                                    .ThenBy(c => c.City)
-                                    .ThenBy(c => c.AddressLine1);
-
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddressesRawSql: Retrieval failed for companyId: {0}.", companyId);
-                throw ex;                 
-            }            
-        }
-
-        public virtual CompanyAddress GetCompanyAddressRawSql(int addressId)
-        {
-            try {
-                // Passes addressId as a parameter to the Table-Valued function dbo.CompanyAddressByAddressId
-                var query = _repository.DBContext.CompanyAddresses
-                                                    .FromSql($"SELECT * FROM dbo.CompanyAddressByAddressId ({addressId})");
-                return query.FirstOrDefault();
-
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddressRawSql: Retrieval failed for addressId: {0}.", addressId);
-                throw ex;                 
-            }                        
-        }
 
         private Address MapFromCompanyAddress(CompanyAddress source)
         {

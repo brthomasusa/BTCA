@@ -419,7 +419,7 @@ namespace BTCA.DataAccess.Initializers
         {
             var data = new List<Company> 
             {
-                new Company {ID = 1, CompanyCode = "ADMIN001", CompanyName = "Btechnical Consulting", DOT_Number = "000000", MC_Number = "MC-000000", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
+                new Company {ID = 1, CompanyCode = "ADMIN001", CompanyName = "Btechnical Consulting, Inc.", DOT_Number = "000000", MC_Number = "MC-000000", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
                 new Company {ID = 2, CompanyCode = "FCT001", CompanyName = "First Choice Transport", DOT_Number = "123456", MC_Number = "MC-123456", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
                 new Company {ID = 3, CompanyCode = "SWIFT001", CompanyName = "Swift Transportation", DOT_Number = "937712", MC_Number = "MC-987665", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
                 new Company {ID = 4, CompanyCode = "SWIFT004", CompanyName = "Swift Trans LLC", DOT_Number = "712025", MC_Number = "MC-987665", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now},
@@ -514,7 +514,7 @@ namespace BTCA.DataAccess.Initializers
                 { 
                     ID = 1,
                     AddressLine1 = "1346 Markum Ranch Rd",
-                    AddressLine2 = "Ste 100",
+                    AddressLine2 = "Ste 200",
                     City = "Fort Worth",
                     StateProvinceId = 45,
                     Zipcode = "76126",

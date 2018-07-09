@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Moq;
 using BTCA.Common.Entities;
-using BTCA.DomainLayer.Managers.Interface;
 using BTCA.DomainLayer.Managers.Implementation;
 using BTCA.DataAccess.Core;
-using BTCA.DataAccess.EF;
 using BTCA.DataAccess.Initializers;
 
 namespace BTCA.Tests.UnitTests
@@ -143,16 +140,6 @@ namespace BTCA.Tests.UnitTests
             mockRepo.Verify(repo => repo.Save(), Times.Once());
         }        
 
-        private Mock<DbSet<Company>> LoadCompanyMockSet()
-        {
-            var mockSet = new Mock<DbSet<Company>>();
-            mockSet.As<IQueryable<Company>>().Setup(m => m.Provider).Returns(GetCompanies().Provider);
-            mockSet.As<IQueryable<Company>>().Setup(m => m.Expression).Returns(GetCompanies().Expression);
-            mockSet.As<IQueryable<Company>>().Setup(m => m.ElementType).Returns(GetCompanies().ElementType);
-            mockSet.As<IQueryable<Company>>().Setup(m => m.GetEnumerator()).Returns(GetCompanies().GetEnumerator());
-
-            return mockSet;            
-        }
 
         private IQueryable<Company> GetCompanies()
         {

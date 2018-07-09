@@ -10,10 +10,7 @@ namespace BTCA.DomainLayer.Managers.Interface
     public interface ICompanyAddressManager : IActionManager
     {
         IEnumerable<CompanyAddress> GetCompanyAddresses(int companyId);
-        CompanyAddress GetCompanyAddress(int companyId, int addressId);
-        CompanyAddress GetCompanyAddress(Expression<Func<Address, bool>> expression);
-
-        IEnumerable<CompanyAddress> GetCompanyAddressesRawSql(int companyId);
-        CompanyAddress GetCompanyAddressRawSql(int addressId);                
+        CompanyAddress GetCompanyAddress(int addressId);
+        CompanyAddress GetCompanyAddress(Expression<Func<CompanyAddress, bool>> expression);               
     }
 }

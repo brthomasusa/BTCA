@@ -132,7 +132,7 @@ namespace BTCA.WebApi.Controllers
         [HttpGet("{companyId}/addresses/{addressId}", Name = "GetCompanyAddress")]
         public IActionResult GetCompanyAddress(int companyId, int addressId)
         {
-            var address = _addressMgr.GetCompanyAddress(companyId, addressId);
+            var address = _addressMgr.GetCompanyAddress(addressId);
             if (address == null)
             { 
                 _logger.LogInformation("Unable to retrieve address with addressId: {ADDRESSID}", addressId);

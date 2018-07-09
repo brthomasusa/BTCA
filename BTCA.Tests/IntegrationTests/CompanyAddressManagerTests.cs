@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
 using Xunit;
 using BTCA.Common.BusinessObjects;
 using BTCA.DataAccess.Core;
@@ -11,193 +9,128 @@ using BTCA.DomainLayer.Managers.Implementation;
 
 namespace BTCA.Tests.IntegrationTests
 {
-    public class CompanyAddressManagerTests
+    public class CompanyAddressManagerFixture : IDisposable
     {
+        private IRepository _repository;
+        public CompanyAddressManagerFixture()
+        {
+            _repository = new Repository(new HOSContext());
+            BTCA.Tests.SeedDatabase.CleanDatabase();
+        }
+        public void Dispose()
+        {   
+            BTCA.Tests.SeedDatabase.CleanDatabase();
+            _repository.DBContext.Dispose();
+        }
+    }
+
+    [CollectionDefinition("CompanyAddressManager collection", DisableParallelization = true)]
+    public class CompanyAddressManagerTests : IClassFixture<CompanyAddressManagerFixture>
+    {
+        private IRepository _repository;
+        private CompanyAddressManagerFixture _fixture;
+
+        public CompanyAddressManagerTests(CompanyAddressManagerFixture fixture)
+        {
+            _repository = new Repository(new HOSContext());
+            _fixture = fixture;           
+        }
+                
         [Fact]
+        [Trait("Category", "IntegrationCompanyAddressMgr")]
         public void Test_CompanyAddressMgr_Create()
         {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
+            ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
 
-            try {
+            var companyAddress = new CompanyAddress
+            {
+                AddressLine1 = "5333 Davidson Highway",
+                AddressLine2 = "",
+                City = "Concord",
+                StateProvinceId = 28,
+                Zipcode = "28027",
+                CountryCode = "USA",
+                IsHQ = true,
+                CreatedBy = "admin",
+                CreatedOn = DateTime.Now,
+                UpdatedBy = "admin",
+                UpdatedOn = DateTime.Now,
+                CompanyId = 6
+            };
 
-                var options = new DbContextOptionsBuilder<HOSContext>()
-                    .UseSqlite(connection)
-                    .EnableSensitiveDataLogging()
-                    .Options;
+            addressMgr.Create(companyAddress);
+            addressMgr.SaveChanges();
 
-                using (var context = new HOSContext(options))
-                {
-                    context.Database.EnsureCreated();
-                }
-
-                using (var context = new HOSContext(options))
-                {
-                    HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadStateProvinceCodeTable(context);                                     
-                }
-
-                using (var context = new HOSContext(options))
-                {
-                    ICompanyAddressManager addressMgr = new CompanyAddressManager(new Repository(context));
-
-                    var companyAddress = new CompanyAddress
-                    {
-                        AddressLine1 = "5333 Davidson Highway",
-                        AddressLine2 = "",
-                        City = "Concord",
-                        StateProvinceId = 28,
-                        Zipcode = "28027",
-                        CountryCode = "USA",
-                        IsHQ = true,
-                        CreatedBy = "admin",
-                        CreatedOn = DateTime.Now,
-                        UpdatedBy = "admin",
-                        UpdatedOn = DateTime.Now,
-                        CompanyId = 6
-                    };
-
-                    addressMgr.Create(companyAddress);
-                    addressMgr.SaveChanges();
-
-                    var test = addressMgr.GetCompanyAddress(a => a.CompanyId == 6 && a.AddressLine1 == "5333 Davidson Highway");
-                    Assert.Equal(companyAddress.CreatedOn, test.CreatedOn);                    
-                }
-
-            } finally {
-                connection.Close();
-            } 
+            var test = addressMgr.GetCompanyAddress(a => a.CompanyId == 6 && a.AddressLine1 == "5333 Davidson Highway");
+            Assert.Equal(companyAddress.CreatedOn, test.CreatedOn); 
         }
 
         [Fact]
+        [Trait("Category", "IntegrationCompanyAddressMgr")]
         public void Test_CompanyAddressMgr_Update()
         {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
+            ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
+            var companyAddress = addressMgr.GetCompanyAddress(2);
+            Assert.NotNull(companyAddress);
 
-            try {
+            DateTime currentTimeStamp = DateTime.Now;
+            companyAddress.UpdatedOn = currentTimeStamp;
+            addressMgr.Update(companyAddress);
+            addressMgr.SaveChanges();
 
-                var options = new DbContextOptionsBuilder<HOSContext>()
-                    .UseSqlite(connection)
-                    .EnableSensitiveDataLogging()
-                    .Options;
-
-                using (var context = new HOSContext(options))
-                {
-                    context.Database.EnsureCreated();
-                }
-
-                using (var context = new HOSContext(options))
-                {
-                    HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.LoadCompanyAddresses(context);                                     
-                }
-
-                using (var context = new HOSContext(options))
-                {
-                    // context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-                    ICompanyAddressManager companyAddressMgr = new CompanyAddressManager(new Repository(context));
-
-                    var companyAddress = companyAddressMgr.GetCompanyAddress(5, 4);
-                    Assert.NotNull(companyAddress);
-
-                    DateTime currentTimeStamp = DateTime.Now;
-                    companyAddress.UpdatedOn = currentTimeStamp;
-                    companyAddressMgr.Update(companyAddress);
-                    companyAddressMgr.SaveChanges();
-
-                    companyAddress =companyAddressMgr.GetCompanyAddress(a => a.CompanyId == 5 && a.ID == 4);
-                    Assert.NotNull(companyAddress);
-                    Assert.Equal(currentTimeStamp, companyAddress.UpdatedOn);                    
-                }
-
-            } finally {
-                connection.Close();
-            }
-        }   
+            companyAddress = addressMgr.GetCompanyAddress(2);
+            Assert.NotNull(companyAddress);
+            Assert.Equal(currentTimeStamp, companyAddress.UpdatedOn); 
+        }        
 
         [Fact]
+        [Trait("Category", "IntegrationCompanyAddressMgr")]
         public void Test_CompanyAddressMgr_Delete()
         {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
+            ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
+            var address = addressMgr.GetCompanyAddress(a => a.CompanyId == 5 && a.AddressLine1 == "2150 Cabot Boulevard West");
+            Assert.NotNull(address);
 
-            try {
+            addressMgr.Delete(address);
+            addressMgr.SaveChanges();
 
-                var options = new DbContextOptionsBuilder<HOSContext>()
-                    .UseSqlite(connection)
-                    .EnableSensitiveDataLogging()
-                    .Options;
-
-                using (var context = new HOSContext(options))
-                {
-                    context.Database.EnsureCreated();
-                }
-
-                using (var context = new HOSContext(options))
-                {
-                    HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.LoadCompanyAddresses(context);                                     
-                }
-
-                using (var context = new HOSContext(options))
-                {
-                    ICompanyAddressManager addressMgr = new CompanyAddressManager(new Repository(context));
-
-                    var address = addressMgr.GetCompanyAddress(a => a.CompanyId == 5 && a.AddressLine1 == "2150 Cabot Boulevard West");
-                    Assert.NotNull(address);
-
-                    addressMgr.Delete(address);
-                    addressMgr.SaveChanges();
-
-                    address = addressMgr.GetCompanyAddress(a => a.CompanyId == 5 && a.AddressLine1 == "2150 Cabot Boulevard West");
-                    Assert.Null(address);                    
-                }
-
-            } finally {
-                connection.Close();
-            }
-        } 
+            address = addressMgr.GetCompanyAddress(a => a.CompanyId == 5 && a.AddressLine1 == "2150 Cabot Boulevard West");
+            Assert.Null(address);                        
+        }
 
         [Fact]
-        public void Test_CompanyAddressMgr_SelectAll()
+        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        public void Test_CompanyAddressMgr_GetAddresses_ByCompanyId()
         {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
+            ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
 
-            try {
+            // In this app, getting all company addresses (or all of anything) is not usefull,
+            // getting all for a company or a driver is useful.
 
-                var options = new DbContextOptionsBuilder<HOSContext>()
-                    .UseSqlite(connection)
-                    .EnableSensitiveDataLogging()
-                    .Options;
+            var addresses = addressMgr.GetCompanyAddresses(2).ToList();                   
+            Assert.NotNull(addresses);
+            Assert.Equal(2, addresses.Count());
+        }
 
-                using (var context = new HOSContext(options))
-                {
-                    context.Database.EnsureCreated();
-                }
+        [Fact]
+        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        public void Test_CompanyAddressMgr_GetAddress_ByAddressId()
+        {
+            ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
 
-                using (var context = new HOSContext(options))
-                {
-                    HOSTestData.LoadCompanyTable(context);
-                    HOSTestData.LoadStateProvinceCodeTable(context);
-                    HOSTestData.LoadCompanyAddresses(context);                                     
-                }
+            var address = addressMgr.GetCompanyAddress(1);                   
+            Assert.NotNull(address);
+            Assert.Equal("1346 Markum Ranch Rd", address.AddressLine1);
+        }
 
-                using (var context = new HOSContext(options))
-                {
-                    ICompanyAddressManager addressMgr = new CompanyAddressManager(new Repository(context));
+        [Fact]
+        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        public void Test_CompanyAddressMgr_GetAddress_ByLinqExpression()                                                 
+        {
+            ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
 
-                    var addresses = addressMgr.GetCompanyAddresses(2).ToList();                   
-                    Assert.NotNull(addresses);
-                    Assert.Equal(2, addresses.Count());
-                }
-
-            } finally {
-                connection.Close();
-            }
-        }                                 
+            var address = addressMgr.GetCompanyAddress(a => a.AddressLine1 == "1346 Markum Ranch Rd");                   
+            Assert.NotNull(address);            
+        }
     }
 }

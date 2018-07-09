@@ -1,5 +1,4 @@
 using System;
-using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -8,27 +7,40 @@ using BTCA.DataAccess.Core;
 using BTCA.DataAccess.EF;
 using BTCA.DomainLayer.Managers.Interface;
 using BTCA.DomainLayer.Managers.Implementation;
-using BTCA.DataAccess.Initializers;
 
 namespace BTCA.Tests.IntegrationTests
 {
-    public class DailyLogTests : IDisposable
+    public class DailyLogTestsFixture : IDisposable
     {
         private IRepository _repository;
-        private IDailyLogManager _dailyLogMgr;
-
-        public DailyLogTests()
+        public DailyLogTestsFixture()
         {
             _repository = new Repository(new HOSContext());
             BTCA.Tests.SeedDatabase.CleanDatabase();
         }
-
+    
         public void Dispose()
-        {
+        {   
+            BTCA.Tests.SeedDatabase.CleanDatabase();
             _repository.DBContext.Dispose();
+        }
+    }
+
+    [CollectionDefinition("DailyLogTests collection", DisableParallelization = true)]
+    public class DailyLogTests : IClassFixture<DailyLogTestsFixture>
+    {
+        private IRepository _repository;
+        private IDailyLogManager _dailyLogMgr;
+        private DailyLogTestsFixture _fixture;
+
+        public DailyLogTests(DailyLogTestsFixture fixture)
+        {
+            _repository = new Repository(new HOSContext());
+            _fixture = fixture;
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void Repo_ReturnAllDailyLogsFromView()
         {
             // Using DbContext.DbQuery<DailyLogModel> ; Requires EF Core 2.1's new Query Types
@@ -38,6 +50,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void Repo_ReturnDailyLogFromView()
         {
             DateTime logDate = new DateTime(2016,9,7);
@@ -50,6 +63,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "Integration.DailyLogModel")]
         public void Repo_ReturnDailyLogFromSql()
         {
             int driverId = 4;
@@ -63,6 +77,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void Repo_ReturnAllDailyLogsFromSql()
         {
             int driverID = 4;
@@ -74,6 +89,7 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void Repo_ReturnAllDailyLogsFromViewFiltered()
         {
             var dailyLogs = _repository.DBContext.DailyLogModels.Where(log => log.DriverID == 4).ToList();
@@ -82,6 +98,7 @@ namespace BTCA.Tests.IntegrationTests
         }  
 
         [Fact]
+        [Trait("Category", "Integration.DailyLogModel")]
         public void Repo_ReturnDailyLogModelFromTableValuedFunc()
         {
             int driverId = 4;
@@ -98,6 +115,7 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void Repo_ReturnDailyLogModelsFromTableValuedFunc()
         {
             int driverId = 4;
@@ -110,6 +128,7 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_ReturnAllDailyLogsUsingLinqExpression()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -120,6 +139,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_ReturnAllDailyLogsUsingDriverID()            
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -132,6 +152,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_ReturnDailyLogUsingLinqExpression()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -142,6 +163,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_ReturnDailyLogByLogDateAndDriverID()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -152,6 +174,7 @@ namespace BTCA.Tests.IntegrationTests
         }                 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_ReturnAllDailyLog()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -162,6 +185,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_CreateDailyLog()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -189,6 +213,7 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_UpdateDailyLog()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -207,6 +232,7 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_DeleteDailyLog()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -222,6 +248,7 @@ namespace BTCA.Tests.IntegrationTests
         
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_CreateDailyLogDetail()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
@@ -251,24 +278,26 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_UpdateDailyLogDetail()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
 
-            var detail = logMgr.GetDailyLogDetail(22);
+            var detail = logMgr.GetDailyLogDetail(1);
             Assert.NotNull(detail);
-            Assert.Equal(9, detail.DutyStatusActivityID);
+            Assert.Equal(1, detail.DutyStatusActivityID);
         
             detail.DutyStatusActivityID = 7;
             logMgr.UpdateLogDetail(detail);
             logMgr.SaveChanges();
 
-            detail = logMgr.GetDailyLogDetail(22);
+            detail = logMgr.GetDailyLogDetail(1);
             Assert.NotNull(detail);
             Assert.Equal(7, detail.DutyStatusActivityID);
         }
 
         [Fact]
+        [Trait("Category", "IntegrationDailyLogTests")]
         public void LogMgr_DeleteDailyLogDetail()
         {
             IDailyLogManager logMgr = new DailyLogManager(_repository);
