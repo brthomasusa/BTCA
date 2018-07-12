@@ -10,13 +10,13 @@ namespace BTCA.Common.Entities
         [Key]
         public virtual int ID { get; set; }
 
-        [Display(Name = "Code")]
+        [Required, Display(Name = "Code")]
         public virtual string CompanyCode { get; set; }
 
-        [Display(Name = "Name")]
+        [Required, Display(Name = "Name")]
         public virtual string CompanyName { get; set; }
 
-        [Display(Name = "DOT Number")]
+        [Required, Display(Name = "DOT Number")]
         public virtual string DOT_Number { get; set; }
 
         [Display(Name = "MC Number")]
