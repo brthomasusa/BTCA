@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using NLog;
-using Microsoft.EntityFrameworkCore;
 using BTCA.DomainLayer.Managers.Interface;
 using BTCA.Common.Entities;
 using BTCA.Common.Core;
-using BTCA.Common.BusinessObjects;
 using BTCA.DataAccess.Core;
 
 namespace BTCA.DomainLayer.Managers.Implementation
@@ -18,6 +15,19 @@ namespace BTCA.DomainLayer.Managers.Implementation
         private Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public StateProvinceCodeManager(IRepository repo) => _repository = repo;
+
+        public IEnumerable<BaseEntity> GetAll()
+        {
+            try {
+
+                return _repository.All<StateProvinceCode>();
+
+            } catch (Exception ex) {
+                _logger.Error(ex, "GetAll: Failed to retrieve StateProvinceCodes");
+                throw ex;                
+            }
+                  
+        }
 
         public IEnumerable<StateProvinceCode> GetStateProvinceCodes(Expression<Func<StateProvinceCode, bool>> expression)
         {
@@ -88,19 +98,6 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _logger.Error(ex, "Delete: Delete failed for StateProvinceCode with ID: {0}", ((StateProvinceCode)entity).ID);
                 throw ex;                  
             }
-        }
-
-        public IEnumerable<BaseEntity> GetAll()
-        {
-            try {
-
-                return _repository.All<StateProvinceCode>();
-
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetAll: Failed to retrieve StateProvinceCodes");
-                throw ex;                
-            }
-                  
         }
 
         public void SaveChanges()

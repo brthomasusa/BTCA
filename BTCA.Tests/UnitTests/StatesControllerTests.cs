@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,45 +15,60 @@ namespace BTCA.Tests.UnitTests
 {
     public class StatesControllerTests : BaseTestClass
     {
-        [Fact]
-        [Trait("Category", "UnitTest.WebApiControllers")]
-        public void Index_Returns_ViewResult_ListOfStateCodes()
+        private readonly ILogger<StatesController> _logger;
+        private Mock<IStateProvinceCodeManager> _mockStateCodeMgr;
+        public StatesControllerTests()
         {
-            var mockStateCodeMgr = new Mock<IStateProvinceCodeManager>();
-            mockStateCodeMgr.Setup(mgr => mgr.GetAll()).Returns(GetTestStateProvinceCodes());
-
             var serviceProvider = new ServiceCollection().AddLogging().BuildServiceProvider();
             var factory = serviceProvider.GetService<ILoggerFactory>();
-            var logger = factory.CreateLogger<StatesController>();
+            _logger = factory.CreateLogger<StatesController>();
+            _mockStateCodeMgr = new Mock<IStateProvinceCodeManager>();
+        }
 
-            var controller = new StatesController(mockStateCodeMgr.Object, logger);
+        [Fact]
+        [Trait("Category", "UnitTest.WebApiControllers")]
+        public void Index_Returns_ViewResult_GetAll()
+        {
+            _mockStateCodeMgr.Setup(mgr => mgr.GetAll()).Returns(GetTestStateProvinceCodes().ToList());
+            var controller = new StatesController(_mockStateCodeMgr.Object, _logger);            
+            
+            IActionResult result = controller.Get();
+            Assert.NotNull(result);
+            var okResult = (OkObjectResult)result;
 
-            var result = controller.Get();
-
-            var objectResult = Assert.IsType<OkObjectResult>(result);
-
-            List<StateProvinceCode> stateCodes = objectResult.Value as List<StateProvinceCode>;
-
+            var stateCodes = (List<StateProvinceCode>)okResult.Value;
+            Assert.NotNull(okResult);
             Assert.Equal(4, stateCodes.Count());
+        }        
+
+        [Fact]
+        [Trait("Category", "UnitTest.WebApiControllers")]
+        public void Index_Returns_ViewResult_StateCode_GetById()
+        {
+            _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(It.IsAny<Expression<Func<StateProvinceCode, bool>>>()))
+                             .Returns( () =>
+                                  GetTestStateProvinceCodes().Where(code => code.ID == 1)
+                                                             .SingleOrDefault()
+                             );
+
+            var controller = new StatesController(_mockStateCodeMgr.Object, _logger); 
+
+            var result = controller.GetById(1);
+            Assert.IsType<OkObjectResult>(result);           
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
-        public void Index_Returns_ViewResult_1_StateCode()
+        public void Index_Returns_ViewResult_StateCode_GetById_NotFound()       
         {
-            var mockStateCodeMgr = new Mock<IStateProvinceCodeManager>();
-            mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(code => code.ID == 1)).Returns(GetTestStateProvinceCode(1));
+            _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(code => code.ID == -1)).Returns(GetTestStateProvinceCode(-1));
+            var controller = new StatesController(_mockStateCodeMgr.Object, _logger); 
 
-            var serviceProvider = new ServiceCollection().AddLogging().BuildServiceProvider();
-            var factory = serviceProvider.GetService<ILoggerFactory>();
-            var logger = factory.CreateLogger<StatesController>();
-
-            var controller = new StatesController(mockStateCodeMgr.Object, logger); 
-
-            var result = controller.GetById(1);           
+            var result = controller.GetById(1);
+            Assert.IsType<NotFoundObjectResult>(result);            
         }
 
-        private IEnumerable<StateProvinceCode> GetTestStateProvinceCodes()
+        private IQueryable<StateProvinceCode> GetTestStateProvinceCodes()
         {
             var stateCodes = new List<StateProvinceCode>
             {
@@ -62,7 +78,7 @@ namespace BTCA.Tests.UnitTests
                 new StateProvinceCode {ID = 4,StateCode = "AZ", StateName = "Arizona",CountryCode = "USA", CreatedBy = "admin", CreatedOn = DateTime.Now, UpdatedBy = "admin", UpdatedOn = DateTime.Now}
             };
 
-            return stateCodes;
+            return stateCodes.AsQueryable();
         }
 
         private StateProvinceCode GetTestStateProvinceCode(int id) 

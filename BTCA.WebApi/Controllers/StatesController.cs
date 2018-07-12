@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using BTCA.DomainLayer.Managers.Interface;
+using BTCA.Common.Entities;
 
 namespace BTCA.WebApi.Controllers
 {
@@ -19,7 +21,10 @@ namespace BTCA.WebApi.Controllers
         } 
 
         [HttpGet]
-        public IActionResult Get() => Ok(_manager.GetAll()); 
+        public IActionResult Get()
+        {
+            return Ok(_manager.GetAll());   
+        } 
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
