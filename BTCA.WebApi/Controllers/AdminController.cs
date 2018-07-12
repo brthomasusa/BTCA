@@ -2,49 +2,50 @@ using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
 using BTCA.DomainLayer.Managers.Interface;
 using BTCA.Common.Entities;
-using BTCA.Common.BusinessObjects;
 
 namespace BTCA.WebApi.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     //[Authorize]    
-    public class AdminController : Controller
+    public class AdminController : ControllerBase
     {
         private readonly ILogger<AdminController> _logger;
         private ICompanyManager _companyMgr;
-        private ICompanyAddressManager _addressMgr;
 
-        public AdminController(ICompanyManager coMgr, ICompanyAddressManager addMgr, ILogger<AdminController> logger)
+        public AdminController(ICompanyManager coMgr, ILogger<AdminController> logger)
         {
-            _addressMgr = addMgr;
             _companyMgr = coMgr;
             _logger = logger;
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Company>), 200)]
         public IActionResult Get()
         {
             return Ok(_companyMgr.GetAll());            
         }
 
         [HttpGet("{id}", Name = "GetCompanyById")]
+        [ProducesResponseType(typeof(Company), 200)]
+        [ProducesResponseType(404)]
         public IActionResult GetById(int id)
         {     
-            _logger.LogInformation("Request path: {Path}", Request.Path);
             var company = _companyMgr.GetCompany(c => c.ID == id);
 
             if (company == null)
             {   
-                _logger.LogInformation("Company with id: {ID} not found: {Path}", id, Request.Path);
+                _logger.LogInformation("Company with id: {0} not found.", id);
                 return NotFound(new { Id = id, error = $"There was no company found with an id of {id}." });
             }       
-            return Json(company);
+            return Ok(company);
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Company), 201)]
+        [ProducesResponseType(400)]
         public IActionResult Create([FromBody] Company company)
         {
             try {
@@ -57,23 +58,25 @@ namespace BTCA.WebApi.Controllers
 
                 _companyMgr.Create(company);
                 _companyMgr.SaveChanges();
+                return CreatedAtRoute("GetCompanyById", new { id = company.ID }, company);
 
             } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPost. Create company failed: {@COMPANY}", company);
+                _logger.LogError(ex, "HttpPost. Create company failed: {0}", company);
                 return BadRequest(ex.Message);
-            }
-
-            return CreatedAtRoute("GetCompanyById", new { id = company.ID }, company);
+            }            
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]        
+        [ProducesResponseType(400)]
         public IActionResult Update(int id, [FromBody] Company company)
         {
             try {
 
-                if (company == null || company.ID != id)
+                if (company == null || company.ID != id || !ModelState.IsValid)
                 {
-                    _logger.LogInformation("Update company received invalid data: {@COMPANY}", company);
+                    _logger.LogInformation("Update company received invalid data: {0}", company);
                     return BadRequest("Null company or invalid company.Id");
                 }
 
@@ -93,16 +96,18 @@ namespace BTCA.WebApi.Controllers
 
                 _companyMgr.Update(toBeUpdated);
                 _companyMgr.SaveChanges();
+                return NoContent();
 
             } catch (Exception ex) {
                 _logger.LogError(ex, "HttpPut - Update company failed: {@Company}", company);
                 return BadRequest(ex.Message);
             }
-                        
-            return StatusCode(204);
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]        
+        [ProducesResponseType(400)]        
         public IActionResult Delete(int id)
         {
             try {
@@ -110,116 +115,18 @@ namespace BTCA.WebApi.Controllers
                 var toBeDeleted = _companyMgr.GetCompany(c => c.ID == id);
                 if (toBeDeleted == null)
                 {
-                    _logger.LogInformation("Company delete failed. No company with Id: {ID} found.", id);
+                    _logger.LogInformation("Company delete failed. No company with Id: {0} found.", id);
                     return NotFound($"Company delete failed. No company with Id: {id} found.");
                 }
 
                 _companyMgr.Delete(toBeDeleted);
                 _companyMgr.SaveChanges();
+                return NoContent();
 
             } catch (Exception ex) {
                 _logger.LogError(ex, "HttpDelete: Delete company with company Id {CompanyId} failed", id);
                 return BadRequest(ex.Message);
-            }
-            
-            return Ok();
-        }
-
-        [HttpGet("{companyId}/addresses", Name = "GetAddressesForCompany")]
-        public IEnumerable<CompanyAddress> GetAddressesForCompany(int companyId) =>
-            _addressMgr.GetCompanyAddresses(companyId);
-
-        [HttpGet("{companyId}/addresses/{addressId}", Name = "GetCompanyAddress")]
-        public IActionResult GetCompanyAddress(int companyId, int addressId)
-        {
-            var address = _addressMgr.GetCompanyAddress(addressId);
-            if (address == null)
-            { 
-                _logger.LogInformation("Unable to retrieve address with addressId: {ADDRESSID}", addressId);
-                return NotFound($"No address with addressId: {addressId} found.");
-            }
-
-            return new ObjectResult(address);
-        }
-
-        [HttpPost("{companyId}/addresses")]
-        public IActionResult CreateAddress([FromBody] CompanyAddress address)
-        {
-            try {
-
-                if (address == null || !ModelState.IsValid)
-                {
-                    _logger.LogInformation("Create company address failed: {@ADDRESS}", address);
-                    return BadRequest(ModelState);
-                }
-
-                address.CreatedBy = "admin";
-                address.CreatedOn = DateTime.Now;
-                address.UpdatedBy = "admin";
-                address.UpdatedOn = DateTime.Now;
-
-                _addressMgr.Create(address);
-                _addressMgr.SaveChanges();
-
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPost: create company address failed");
-                return BadRequest(ex.Message); 
-            }
-
-            return CreatedAtRoute("GetCompanyAddress", new {companyId = address.CompanyId, addressId = address.ID}, address);
-        }
-
-        [HttpPut("{companyId}/addresses/{addressId}")]
-        public IActionResult UpdateAddress(int addressId, [FromBody] CompanyAddress address)
-        {
-            try {
-
-                if (address == null || address.ID != addressId)
-                {
-                    _logger.LogInformation("Update company address failed: {@ADDRESS}", address);
-                    return BadRequest("Invalid address ID");
-                }
-
-                if (!ModelState.IsValid)
-                {   _logger.LogInformation("Invalid model state {@MODELSTATE}.", ModelState);
-                    return BadRequest(ModelState);
-                }
-
-                address.UpdatedBy = "admin";
-                address.UpdatedOn = DateTime.Now;
-
-                _addressMgr.Update(address);
-                _addressMgr.SaveChanges();
-
-                return new NoContentResult();
-
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPut: update company address failed");
-                return BadRequest(ex.Message); 
-            }            
-        } 
-
-        [HttpDelete("{companyId}/addresses/{addressId}")]
-        public IActionResult DeleteAddress(int addressId)
-        {
-            try {
-
-                var toBeDeleted = _addressMgr.GetCompanyAddress(a => a.ID == addressId);
-                if (toBeDeleted == null)
-                {
-                    _logger.LogInformation($"Delete company address failed. No address with Id: {addressId} found.");
-                    return NotFound($"Delete company address failed. No address with Id: {addressId} found.");
-                }
-
-                _addressMgr.Delete(toBeDeleted);
-                _addressMgr.SaveChanges();
-
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpDelete: delete company address failed");
-                return BadRequest(ex.Message); 
-            }
-            
-            return new NoContentResult();
-        }                
+            }                        
+        }               
     }
 }

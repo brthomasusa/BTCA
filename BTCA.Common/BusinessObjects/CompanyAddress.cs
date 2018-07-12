@@ -21,8 +21,8 @@ namespace BTCA.Common.BusinessObjects
         [MaxLength(2), MinLength(2), Display(Name = "State")]
 
         public string StateCode { get; set; }
-
-        [Required, Display(Name = "State")]
+        
+        [Required, Range(int.MinValue, 1), Display(Name = "State")]
         public int StateProvinceId { get; set; }
 
         [Required, MaxLength(9), DataType(DataType.PostalCode)]
@@ -34,7 +34,7 @@ namespace BTCA.Common.BusinessObjects
         [Required, Display(Name = "HQ?")]
         public bool IsHQ { get; set; }   
 
-        [Required]
+        [Required, Range(int.MinValue, 1)]
         public int CompanyId { get; set; }             
     }
 }
