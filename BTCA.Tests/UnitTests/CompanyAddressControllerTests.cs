@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Xunit;
 using Moq;
-using BTCA.Common.Entities;
 using BTCA.Common.BusinessObjects;
 using BTCA.DomainLayer.Managers.Interface;
 using BTCA.WebApi.Controllers;
-using BTCA.DataAccess.Initializers;
 
 namespace BTCA.Tests.UnitTests
 {

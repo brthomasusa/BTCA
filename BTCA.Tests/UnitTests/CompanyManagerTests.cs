@@ -14,7 +14,7 @@ namespace BTCA.Tests.UnitTests
     public class CompanyManagerTests
     {
         [Fact]
-        [Trait("Category", "CompanyManager")]
+        [Trait("Category", "UnitTest.CompanyManager")]
         public void GetCompanies_using_Repo_Filter()
         {
             var data = GetCompanies();
@@ -40,7 +40,7 @@ namespace BTCA.Tests.UnitTests
         } 
 
         [Fact]
-        [Trait("Category", "CompanyManager")]
+        [Trait("Category", "UnitTest.CompanyManager")]
         public void GetAll_using_Repo_All()
         {
             var data = GetCompanies();  
@@ -56,11 +56,11 @@ namespace BTCA.Tests.UnitTests
 
             mockRepo.Verify(repo => repo.All<Company>(), Times.Once());
             Assert.Equal(7, results.Count());
-            Assert.Equal("Btechnical Consulting", ((Company)results.First()).CompanyName); 
+            Assert.Equal("Btechnical Consulting, Inc.", ((Company)results.First()).CompanyName); 
         }
 
         [Fact]
-        [Trait("Category", "CompanyManager")]
+        [Trait("Category", "UnitTest.CompanyManager")]
         public void GetCompany_using_Repo_Find()
         {
             var data = GetCompanies();
@@ -90,7 +90,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
-        [Trait("Category", "CompanyManager")]
+        [Trait("Category", "UnitTest.CompanyManager")]
         public void CreateCompany_using_Repo_Create()
         {
             var methodCall = 0;
@@ -107,7 +107,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
-        [Trait("Category", "CompanyManager")]
+        [Trait("Category", "UnitTest.CompanyManager")]
         public void UpdateCompany_using_Repo_Update()
         {
             var methodCall = 0;
@@ -124,7 +124,7 @@ namespace BTCA.Tests.UnitTests
         }
 
         [Fact]
-        [Trait("Category", "CompanyManager")]
+        [Trait("Category", "UnitTest.CompanyManager")]
         public void DeleteCompany_using_Repo_Delete()
         {
             var methodCall = 0;

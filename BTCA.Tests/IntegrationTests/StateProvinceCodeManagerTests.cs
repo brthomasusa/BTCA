@@ -14,7 +14,7 @@ namespace BTCA.Tests.IntegrationTests
     public class StateProvinceCodeManagerTests
     {
         [Fact]
-        [Trait("Category", "Integration")]
+        [Trait("Category", "Integration.StateProvinceCodeManager")]
         public void Test_StateProvinceCodeMgr_StateCodeSelectAll()
         {
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -52,7 +52,7 @@ namespace BTCA.Tests.IntegrationTests
         } 
 
         [Fact]
-        [Trait("Category", "Integration")]
+        [Trait("Category", "Integration.StateProvinceCodeManager")]
         public void Test_StateProvinceCodeMgr_StateCodeSelectUSACodes()
         {
             var connection = new SqliteConnection("DataSource=:memory:");

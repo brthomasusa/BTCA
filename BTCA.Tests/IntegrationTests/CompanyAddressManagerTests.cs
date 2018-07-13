@@ -37,7 +37,7 @@ namespace BTCA.Tests.IntegrationTests
         }
                 
         [Fact]
-        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        [Trait("Category", "Integration.CompanyAddressManager")]
         public void Test_CompanyAddressMgr_Create()
         {
             ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
@@ -66,7 +66,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
-        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        [Trait("Category", "Integration.CompanyAddressManager")]
         public void Test_CompanyAddressMgr_Update()
         {
             ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
@@ -84,7 +84,7 @@ namespace BTCA.Tests.IntegrationTests
         }        
 
         [Fact]
-        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        [Trait("Category", "Integration.CompanyAddressManager")]
         public void Test_CompanyAddressMgr_Delete()
         {
             ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
@@ -99,7 +99,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
-        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        [Trait("Category", "Integration.CompanyAddressManager")]
         public void Test_CompanyAddressMgr_GetAddresses_ByCompanyId()
         {
             ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
@@ -113,7 +113,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
-        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        [Trait("Category", "Integration.CompanyAddressManager")]
         public void Test_CompanyAddressMgr_GetAddress_ByAddressId()
         {
             ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);
@@ -124,7 +124,7 @@ namespace BTCA.Tests.IntegrationTests
         }
 
         [Fact]
-        [Trait("Category", "IntegrationCompanyAddressMgr")]
+        [Trait("Category", "Integration.CompanyAddressManager")]
         public void Test_CompanyAddressMgr_GetAddress_ByLinqExpression()                                                 
         {
             ICompanyAddressManager addressMgr = new CompanyAddressManager(_repository);

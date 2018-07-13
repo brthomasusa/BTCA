@@ -56,7 +56,7 @@ namespace BTCA.Tests.UnitTests
             var actual = repository.Find<Company>(c => c.CompanyCode == "ADMIN001");      
 
             Assert.NotNull(actual);
-            Assert.Equal("Btechnical Consulting", actual.CompanyName);            
+            Assert.Equal("Btechnical Consulting, Inc.", actual.CompanyName);            
         }
         
         [Fact]
