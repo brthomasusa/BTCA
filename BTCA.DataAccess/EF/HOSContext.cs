@@ -1,10 +1,6 @@
 using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using BTCA.Common.Entities;
 using BTCA.Common.BusinessObjects;
 
@@ -24,9 +20,8 @@ namespace BTCA.DataAccess.EF
         {
             var entry = this.Entry(entity);
             entry.State = EntityState.Modified;
-            // Entry(entity).State = EntityState.Modified;
         }
-        
+
         public virtual DbSet<StateProvinceCode> StateProvinceCodes { get; set; }
         public virtual DbSet<Company> Companies { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }

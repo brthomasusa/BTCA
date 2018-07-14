@@ -11,6 +11,6 @@ namespace BTCA.DomainLayer.Managers.Interface
         IEnumerable<CompanyUser> GetAll();
         IEnumerable<CompanyUser> GetCompanyUsers(int companyId);
         CompanyUser GetCompanyUser(int companyId, int userId);
-        CompanyUser GetCompanyUser(Expression<Func<AppUser, bool>> expression);         
+        CompanyUser GetCompanyUser(Func<AppUser, bool> expression);         
     }
 }

@@ -18,20 +18,21 @@ namespace BTCA.DomainLayer.Managers.Implementation
         private Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         public DailyLogManager(IRepository repository) => _repository = repository; 
 
-        public IEnumerable<DailyLogModel> GetDailyLogs(Expression<Func<DailyLogModel, bool>> expression)
+        public IEnumerable<DailyLogModel> GetDailyLogs(Func<DailyLogModel, bool> expression)
         {
             try {
 
-                var dailyLogs = _repository.DBContext.DailyLogModels.Where(expression).ToList();
+                var dailyLogs = _repository.FilterQuery<DailyLogModel>(expression).ToList();
                 return dailyLogs.OrderBy(log => log.LogDate);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
+            } catch (Exception ex) when (Log(ex, "GetDailyLogs: Retrieval of daily log failed"))
+            {
                 throw ex;                   
             }            
         }
 
-        public IEnumerable<DailyLogModel> GetDailyLogs(int driverId)
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
+        public IEnumerable<DailyLogModel> GetDailyLogsForDriver(int driverId)
         {
             try {
 
@@ -41,25 +42,42 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return dailyLogs.OrderBy(log => log.LogDate);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
+            } catch (Exception ex) when(Log(ex, "GetDailyLogs: Retrieval of daily log failed")) 
+            {
                 throw ex;                 
             }            
         }
 
-        public DailyLogModel GetDailyLog(Expression<Func<DailyLogModel, bool>> expression)
+        public IEnumerable<DailyLogModel> GetDailyLogsForCompany(int companyId)
         {
             try {
 
-                var dailyLog = _repository.DBContext.DailyLogModels.Where(expression).SingleOrDefault();
+                var dailyLogs = _repository.DBContext.DailyLogModels
+                                                    .FromSql($"SELECT * FROM dbo.DailyLogModelByCompanyId ({companyId})")
+                                                    .ToList();
+
+                return dailyLogs.OrderBy(log => log.LogDate);
+
+            } catch (Exception ex) when(Log(ex, "GetDailyLogs: Retrieval of daily log failed"))
+            {
+                throw ex;                 
+            } 
+        }
+
+        public DailyLogModel GetDailyLog(Func<DailyLogModel, bool> expression)
+        {
+            try {
+
+                var dailyLog = _repository.FindQuery<DailyLogModel>(expression);
                 return dailyLog;
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
+            } catch (Exception ex) when(Log(ex, "GetDailyLogs: Retrieval of daily log failed")) 
+            {
                 throw ex;                 
             }
         }
 
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
         public DailyLogModel GetDailyLog(DateTime logDate, int driverId)
         {
             try {
@@ -71,17 +89,34 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return dailyLog;
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
+            } catch (Exception ex) when(Log(ex, "GetDailyLogs: Retrieval of daily log failed"))
+            {
                 throw ex;                 
             }            
+        }
+
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
+        public DailyLogModel GetDailyLog(int LogId)
+        {
+            try {
+
+                var dailyLog = _repository.DBContext.DailyLogModels
+                                                    .FromSql($"SELECT * FROM dbo.DailyLogModelByLogID ({LogId})")
+                                                    .SingleOrDefault(); 
+
+                return dailyLog;
+
+            } catch (Exception ex) when (Log(ex, "GetDailyLogs: Retrieval of daily log failed"))
+            {
+                throw ex;                 
+            }
         }
 
         public IEnumerable<BaseEntity> GetAll()
         {
             try {
 
-                var dailyLogs = _repository.DBContext.DailyLogModels.ToList();
+                var dailyLogs = _repository.AllQueryType<DailyLogModel>().ToList();
                 return dailyLogs.OrderBy(log => log.DriverID).ThenBy(log => log.LogDate);
 
             } catch (Exception ex) {
@@ -90,19 +125,20 @@ namespace BTCA.DomainLayer.Managers.Implementation
             }
         }
 
-        public IEnumerable<DailyLogDetailModel> GetDailyLogDetails(Expression<Func<DailyLogDetailModel, bool>> expression)
+        public IEnumerable<DailyLogDetailModel> GetDailyLogDetails(Func<DailyLogDetailModel, bool> expression)
         {
             try {
                 
-                var dailyLogDetailModels = _repository.DBContext.DailyLogDetailModels.Where(expression).ToList();
+                var dailyLogDetailModels = _repository.FilterQuery<DailyLogDetailModel>(expression).ToList();
                 return dailyLogDetailModels.OrderBy(detail => detail.StartTime);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Failed to retrieve daily log details with expression: {0}.", expression);
+            } catch (Exception ex) when (Log(ex, "Failed to retrieve daily log details")) 
+            {
                 throw ex; 
             }
         }
 
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
         public IEnumerable<DailyLogDetailModel> GetDailyLogDetails(int logID)
         {
             try {
@@ -113,25 +149,26 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return dailyLogs.OrderBy(detail => detail.StartTime);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Failed to retrieve daily log details with LogID: {0}.", logID);
+            } catch (Exception ex) when(Log(ex, $"Failed to retrieve daily log details with LogID: {logID}."))
+            {
                 throw ex; 
             }            
         }
 
-        public DailyLogDetailModel GetDailyLogDetail(Expression<Func<DailyLogDetailModel, bool>> expression)
+        public DailyLogDetailModel GetDailyLogDetail(Func<DailyLogDetailModel, bool> expression)
         {
             try {
                 
-                var dailyLogDetailModels = _repository.DBContext.DailyLogDetailModels.Where(expression).SingleOrDefault();
+                var dailyLogDetailModels = _repository.FindQuery<DailyLogDetailModel>(expression);
                 return dailyLogDetailModels;
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Failed to retrieve daily log details with expression: {0}.", expression);
+            } catch (Exception ex) when(Log(ex, $"Failed to retrieve daily log details with expression: {expression}."))
+            {
                 throw ex; 
             }
         }
 
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
         public DailyLogDetailModel GetDailyLogDetail(int logDetailID)
         {
             try {
@@ -142,8 +179,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return dailyLog;
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Failed to retrieve daily log details with LogDetaiID: {0}.", logDetailID);
+            } catch (Exception ex) when(Log(ex, $"Failed to retrieve daily log details with LogDetaiID: {logDetailID}."))
+            {
                 throw ex; 
             }
         }
@@ -157,8 +194,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Create<DailyLog>(dailyLog);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Create: Create failed for daily log.");
+            } catch (Exception ex) when(Log(ex, "Create: Create failed for daily log."))
+            {
                 throw ex;                
             }
         }
@@ -172,8 +209,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Create<DailyLogDetail>(dailyLogDetail);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "CreateDetail: Create failed for daily log detail entry.");
+            } catch (Exception ex) when(Log(ex, $"CreateLogDetail: Create failed for daily log detail entry."))
+            {
                 throw ex;                
             }            
         }
@@ -187,8 +224,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Update<DailyLog>(dailyLog);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Update: Update failed for daily log with ID: {0}", ((DailyLogModel)entity).LogID);
+            } catch (Exception ex) when(Log(ex, $"Update: Update failed for daily log with ID: {((DailyLogModel)entity).LogID}"))
+            {
                 throw ex;
             }
         }
@@ -202,8 +239,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Update<DailyLogDetail>(dailyLogDetail);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "UpdateDetail: Update failed for daily log detail entry.");
+            } catch (Exception ex) when(Log(ex, "UpdateLogDetail: Update failed for daily log detail entry."))
+            {
                 throw ex;                
             } 
         }
@@ -217,8 +254,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Delete<DailyLog>(dailyLog);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Delete: Delete failed for DailyLog with ID: {0}", ((DailyLogModel)entity).LogID);
+            } catch (Exception ex) when(Log(ex, $"Delete: Delete failed for DailyLog with ID: {((DailyLogModel)entity).LogID}"))
+            {
                 throw ex;                
             }
         }
@@ -232,8 +269,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Delete<DailyLogDetail>(dailyLogDetail);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "DeleteDetail: Delete failed for daily log detail entry.");
+            } catch (Exception ex) when(Log(ex, "DeleteDetail: Delete failed for daily log detail entry."))
+            {
                 throw ex;                
             }             
         }
@@ -244,13 +281,13 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Save();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "SaveChanges: Saving daily log to the database failed");
+            } catch (Exception ex) when(Log(ex, "SaveChanges: Saving daily log to the database failed"))
+            {
                 throw ex;
             }            
         } 
 
-        public DailyLogDetailModel GetLastPreTripInspection(Expression<Func<DailyLogDetailModel, bool>> expression)
+        public DailyLogDetailModel GetLastPreTripInspection(Func<DailyLogDetailModel, bool> expression)
         {
             // expression should be the driver id
             // var filterQuery = _repository.DBContext.DailyLogs
@@ -303,8 +340,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return dailyLogModel;
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetDailyLogs: Retrieval of daily log failed");
+            } catch (Exception ex) when(Log(ex, "GetDailyLogs: Retrieval of daily log failed"))
+            {
                 throw ex;                 
             }
         }
@@ -352,6 +389,14 @@ namespace BTCA.DomainLayer.Managers.Implementation
             };  
 
             return destination;
+        }
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.Error(e, msg);
+            // Returning true cause execution to go into the catch block,
+            // false causes execution to bypass the catch block
+            return true;
         }
     }
 }

@@ -31,8 +31,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Create<Address>(address);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Create: Create failed for company address.");
+            } catch (Exception ex) when(Log(ex, "Create: Create failed for company address.")) 
+            {
                 throw ex;                
             }
         }
@@ -46,8 +46,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Update<Address>(address);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Update: Update failed for company address with ID: {0}", ((CompanyAddress)entity).ID);
+            } catch (Exception ex) when(Log(ex, $"Update: Update failed for company address with ID: {((CompanyAddress)entity).ID}"))
+            {
                 throw ex;
             }
         }
@@ -61,8 +61,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Delete<Address>(address);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Delete: Delete failed for company address with ID: {0}", ((CompanyAddress)entity).ID);
+            } catch (Exception ex) when(Log(ex, $"Delete: Delete failed for company address with ID: {((CompanyAddress)entity).ID}"))
+            {
                 throw ex;                
             }
         }
@@ -73,8 +73,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Save();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "SaveChanges: Saving company address to the database failed");
+            } catch (Exception ex) when(Log(ex, "SaveChanges: Saving company address to the database failed"))
+            {
                 throw ex;
             }            
         } 
@@ -87,12 +87,13 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                                                      .ThenBy(ca => ca.City)
                                                                      .ThenBy(ca => ca.AddressLine1);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetAll: Retrieval of all addresses failed");
+            } catch (Exception ex) when(Log(ex, "GetAll: Retrieval of all addresses failed"))
+            {
                 throw ex;
             }            
         }
 
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
         public virtual IEnumerable<CompanyAddress> GetCompanyAddresses(int companyId)
         {
             try {
@@ -105,12 +106,28 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                             .ThenBy(address => address.City)
                                             .ThenBy(address => address.AddressLine1);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddresses: Retrieval of addresses with company Id {0} failed", companyId);
+            } catch (Exception ex) when(Log(ex, $"GetCompanyAddresses: Retrieval of addresses with company Id {companyId} failed"))
+            {
                 throw ex;
             }
         } 
 
+        public IEnumerable<CompanyAddress> GetCompanyAddresses(Func<CompanyAddress, bool> expression)
+        {
+            try {
+
+                return _repository.FilterQuery<CompanyAddress>(expression).ToList()
+                                  .OrderBy(address => address.StateCode)
+                                  .ThenBy(address => address.City)
+                                  .ThenBy(address => address.AddressLine1);                
+
+            } catch (Exception ex) when(Log(ex, $"GetCompanyAddresses: Retrieval of addresses with expression {expression} failed"))
+            {
+                throw ex;
+            }            
+        }
+
+        // Depends upon a DbContext extension method (FromSql), can not be unit tested!
         public virtual CompanyAddress GetCompanyAddress(int addressId)
         {
             try {
@@ -121,20 +138,20 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return companyAddress.SingleOrDefault();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddress: Retrieval of address with address Id {0} failed", addressId);
+            } catch (Exception ex) when(Log(ex, $"GetCompanyAddress: Retrieval of address with address Id {addressId} failed"))
+            {
                 throw ex;                
             }
         }
 
-        public virtual CompanyAddress GetCompanyAddress(Expression<Func<CompanyAddress, bool>> expression)
+        public virtual CompanyAddress GetCompanyAddress(Func<CompanyAddress, bool> expression)
         {
             try {
 
-                return _repository.AllQueryType<CompanyAddress>().Where(expression).SingleOrDefault();
+                return _repository.FindQuery<CompanyAddress>(expression);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyAddress: Retrieval of address with expression {0}.", expression);
+            } catch (Exception ex) when(Log(ex, $"GetCompanyAddress: Retrieval of address with expression {expression}."))
+            {
                 throw ex;                 
             }
         }  
@@ -158,6 +175,12 @@ namespace BTCA.DomainLayer.Managers.Implementation
             };
 
             return address;
-        }              
+        } 
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.Error(e, msg);
+            return true;
+        }                     
     }
 }

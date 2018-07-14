@@ -8,7 +8,7 @@ namespace BTCA.DomainLayer.Managers.Interface
 {
     public interface ICompanyManager : IActionManager
     {
-        IEnumerable<Company> GetCompanies(Expression<Func<Company, bool>> expression);
-        Company GetCompany(Expression<Func<Company, bool>> expression);         
+        IEnumerable<Company> GetCompanies(Func<Company, bool> expression);
+        Company GetCompany(Func<Company, bool> expression);         
     }
 }

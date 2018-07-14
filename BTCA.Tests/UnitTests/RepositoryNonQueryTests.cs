@@ -16,7 +16,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.Repository")]
         public void CreateCompany_saves_a_company_via_context()
         {
-            // Testing BTCA.DataAccess.Core.IRepository.Create()
+            var company = GetOneCompany();
             var mockSet = new Mock<DbSet<Company>>();
               
             var mockContext = new Mock<HOSContext>(); 
@@ -24,10 +24,10 @@ namespace BTCA.Tests.UnitTests
             mockContext.Setup(c => c.SaveChanges()).Returns(1); 
 
             var repository = new Repository(mockContext.Object);
-            repository.Create<Company>(GetOneCompany());
+            repository.Create<Company>(company);
             repository.Save();
 
-            mockSet.Verify(m => m.Add(It.IsAny<Company>()), Times.Once()); 
+            mockSet.Verify(m => m.Add(It.Is<Company>(i => i == company)), Times.Once()); 
             mockContext.Verify(m => m.SaveChanges(), Times.Once()); 
         }
 
@@ -35,25 +35,20 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.Repository")]
         public void UpdateCompany_update_a_company_via_context()  
         {
-            // Testing BTCA.DataAccess.Core.IRepository.Update()
-            int methodInvocation = 0;
+            var company = GetOneCompany();
             var mockSet = new Mock<DbSet<Company>>();
               
             var mockContext = new Mock<HOSContext>(); 
             mockContext.Setup(c => c.Set<Company>()).Returns(mockSet.Object);
-            
-            // Setup HOSContext.SetModified to do nothing ...
-            mockContext.Setup(c => c.SetModified(It.IsAny<Company>()))
-                    .Callback(() => methodInvocation++);
-
+            mockContext.Setup(c => c.SetModified(It.Is<Company>(i => i == company)));
             mockContext.Setup(c => c.SaveChanges()).Returns(1); 
 
             var repository = new Repository(mockContext.Object);
-            repository.Update<Company>(GetOneCompany());
+            repository.Update<Company>(company);
             repository.Save();  
 
-            mockSet.Verify(m => m.Attach(It.IsAny<Company>()), Times.Once());
-            mockContext.Verify(m => m.SetModified(It.IsAny<Company>()), Times.Once());
+            mockSet.Verify(m => m.Attach(It.Is<Company>(i => i == company)), Times.Once());
+            mockContext.Verify(m => m.SetModified(It.Is<Company>(i => i == company)), Times.Once());
             mockContext.Verify(m => m.SaveChanges(), Times.Once());                       
         }   
 
@@ -61,17 +56,17 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.Repository")]
         public void DeleteCompany_delete_a_company_via_context() 
         {
-            // Testing BTCA.DataAccess.Core.IRepository.Delete() (delete 1 entity obj)
+            var company = GetOneCompany();
             var mockSet = new Mock<DbSet<Company>>();              
             var mockContext = new Mock<HOSContext>(); 
             mockContext.Setup(c => c.Set<Company>()).Returns(mockSet.Object); 
             mockContext.Setup(c => c.SaveChanges()).Returns(1); 
 
             var repository = new Repository(mockContext.Object);
-            repository.Delete<Company>(GetOneCompany());
+            repository.Delete<Company>(company);
             repository.Save();
 
-            mockSet.Verify(m => m.Remove(It.IsAny<Company>()), Times.Once()); 
+            mockSet.Verify(m => m.Remove(It.Is<Company>(i => i == company)), Times.Once()); 
             mockContext.Verify(m => m.SaveChanges(), Times.Once());             
         }          
 

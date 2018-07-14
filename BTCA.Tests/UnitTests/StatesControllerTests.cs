@@ -45,7 +45,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void Index_Returns_ViewResult_StateCode_GetById()
         {
-            _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(It.IsAny<Expression<Func<StateProvinceCode, bool>>>()))
+            _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(It.IsAny<Func<StateProvinceCode, bool>>()))
                              .Returns( () =>
                                   GetTestStateProvinceCodes().Where(code => code.ID == 1)
                                                              .SingleOrDefault()

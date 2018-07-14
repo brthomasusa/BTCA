@@ -29,6 +29,26 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpGet_CompanyAddress_GetAll()
         {
+            _mockCompAddMgr.Setup(mgr => mgr.GetAll())
+                           .Returns(GetCompanyAddresses().ToList()); 
+
+            var controller = new CompanyAddressController(_mockCompAddMgr.Object, _logger);
+
+            var result = controller.GetAll();
+            Assert.IsType<OkObjectResult>(result);
+            _mockCompAddMgr.Verify(m => m.GetAll(), Times.Once());
+
+            var okResult = (OkObjectResult)result;
+            Assert.NotNull(okResult);
+
+            var companyAddresses = (List<CompanyAddress>)okResult.Value;            
+            Assert.Equal(6, companyAddresses.Count());                                       
+        }
+
+        [Fact]
+        [Trait("Category", "UnitTest.WebApiControllers")]
+        public void HttpGet_CompanyAddress_GetByCompanyId()
+        {
             var companyId = 2;
 
             _mockCompAddMgr.Setup(mgr => mgr.GetCompanyAddresses(It.Is<int>(i => i == companyId)))
@@ -36,7 +56,7 @@ namespace BTCA.Tests.UnitTests
 
             var controller = new CompanyAddressController(_mockCompAddMgr.Object, _logger);
 
-            var result = controller.GetAll(companyId);
+            var result = controller.GetByCompanyId(companyId);
             Assert.IsType<OkObjectResult>(result);
             _mockCompAddMgr.Verify(m => m.GetCompanyAddresses(It.Is<int>(i => i == companyId)), Times.Once());
 
@@ -49,7 +69,7 @@ namespace BTCA.Tests.UnitTests
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
-        public void HttpGet_GetCompanyAddress_GetById()
+        public void HttpGet_GetCompanyAddress_GetByAddressId()
         {
             var addressId = GetOneCompanyAddress().ID;
 
@@ -58,7 +78,7 @@ namespace BTCA.Tests.UnitTests
 
             var controller = new CompanyAddressController(_mockCompAddMgr.Object, _logger);
 
-            var result = controller.GetById(addressId);
+            var result = controller.GetByAddressId(addressId);
             Assert.IsType<OkObjectResult>(result);
             _mockCompAddMgr.Verify(m => m.GetCompanyAddress(It.Is<int>(i => i == addressId)), Times.Once());
 
@@ -69,7 +89,7 @@ namespace BTCA.Tests.UnitTests
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
-        public void HttpGet_GetCompanyAddress_GetById_WithInvalidId()
+        public void HttpGet_GetCompanyAddress_GetByAddressId_WithInvalidId()
         {
             var addressId = 220;
 
@@ -78,7 +98,7 @@ namespace BTCA.Tests.UnitTests
 
             var controller = new CompanyAddressController(_mockCompAddMgr.Object, _logger);
 
-            var result = controller.GetById(addressId);
+            var result = controller.GetByAddressId(addressId);
             Assert.IsType<NotFoundObjectResult>(result);
             _mockCompAddMgr.Verify(m => m.GetCompanyAddress(It.Is<int>(i => i == addressId)), Times.Once());           
         }

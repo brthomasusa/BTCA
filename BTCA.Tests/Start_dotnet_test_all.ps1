@@ -1,3 +1,6 @@
+Write-Host ">>>> Running DailyLogManager unit tests ...  <<<<"
+$scriptblock = 'dotnet test --filter Category=UnitTest.DailyLogManager'
+Invoke-Expression $scriptblock
 
 Write-Host ">>>> Running Repository unit tests ...  <<<<"
 $scriptblock = 'dotnet test --filter Category=UnitTest.Repository'

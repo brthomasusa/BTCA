@@ -9,17 +9,20 @@ namespace BTCA.DomainLayer.Managers.Interface
 {
     public interface IDailyLogManager : IActionManager
     {
-        IEnumerable<DailyLogModel> GetDailyLogs(Expression<Func<DailyLogModel, bool>> expression);
-        IEnumerable<DailyLogModel> GetDailyLogs(int driverId);
-        DailyLogModel GetDailyLog(Expression<Func<DailyLogModel, bool>> expression);
+        IEnumerable<DailyLogModel> GetDailyLogs(Func<DailyLogModel, bool> expression);
+        IEnumerable<DailyLogModel> GetDailyLogsForDriver(int driverId);
+        IEnumerable<DailyLogModel> GetDailyLogsForCompany(int companyId);
+        
+        DailyLogModel GetDailyLog(Func<DailyLogModel, bool> expression);
         DailyLogModel GetDailyLog(DateTime logDate, int driverId);
+        DailyLogModel GetDailyLog(int LogId);
         void CreateLogDetail(BaseEntity entity);
         void UpdateLogDetail(BaseEntity entity);
         void DeleteLogDetail(BaseEntity entity);  
-        IEnumerable<DailyLogDetailModel> GetDailyLogDetails(Expression<Func<DailyLogDetailModel, bool>> expression);
+        IEnumerable<DailyLogDetailModel> GetDailyLogDetails(Func<DailyLogDetailModel, bool> expression);
         IEnumerable<DailyLogDetailModel> GetDailyLogDetails(int logID);
-        DailyLogDetailModel GetDailyLogDetail(Expression<Func<DailyLogDetailModel, bool>> expression);                      
+        DailyLogDetailModel GetDailyLogDetail(Func<DailyLogDetailModel, bool> expression);                      
         DailyLogDetailModel GetDailyLogDetail(int logDetailID);
-        DailyLogDetailModel GetLastPreTripInspection(Expression<Func<DailyLogDetailModel, bool>> expression);
+        DailyLogDetailModel GetLastPreTripInspection(Func<DailyLogDetailModel, bool> expression);
     }
 }

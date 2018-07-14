@@ -18,15 +18,15 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
         public CompanyManager(IRepository repository) => _repository = repository;
 
-        public IEnumerable<Company> GetCompanies(Expression<Func<Company, bool>> expression)
+        public IEnumerable<Company> GetCompanies(Func<Company, bool> expression)
         {
             try {
                 
                 var companies = _repository.Filter<Company>(expression);
                 return companies.OrderBy(c => c.CompanyName);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanies: Operation failed using expression {0}", expression);
+            } catch (Exception ex) when(Log(ex, $"GetCompanies: Operation failed using expression {expression}"))
+            {
                 throw ex;                
             }
         }
@@ -40,20 +40,20 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                   .OrderBy(c => c.CompanyName);
 
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetAll: Failed to retrieve companies.");
+            } catch (Exception ex) when(Log(ex, "GetAll: Failed to retrieve companies."))
+            {
                 throw ex;                 
             }
         }
 
-        public Company GetCompany(Expression<Func<Company, bool>> expression)
+        public Company GetCompany(Func<Company, bool> expression)
         {            
             try {
 
                 return _repository.Find<Company>(expression);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompany: Operation failed using expression {0}", expression);
+            } catch (Exception ex) when(Log(ex, $"GetCompany: Operation failed using expression {expression}"))
+            {
                 throw ex;                
             }            
         }
@@ -67,8 +67,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Create<Company>(company);
                 _logger.Info("Record saved for {0}", this.GetType());
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Create: Create failed for company");
+            } catch (Exception ex) when(Log(ex, "Create: Create failed for company"))
+            {
                 throw ex;                
             }
         }
@@ -82,8 +82,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Update<Company>(company);
                 _logger.Info("Record saved for {0}", this.GetType());
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Update: Update failed for company with ID: {0}", ((Company)entity).ID);
+            } catch (Exception ex) when(Log(ex, $"Update: Update failed for company with ID: {((Company)entity).ID}"))
+            {
                 throw ex;                 
             }
         }
@@ -97,8 +97,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Delete<Company>(company);
                 _logger.Info("Record saved for {0}", this.GetType());
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Delete: Delete failed for Company with ID: {0}", ((Company)entity).ID);
+            } catch (Exception ex) when(Log(ex, $"Delete: Delete failed for Company with ID: {((Company)entity).ID}"))
+            {
                 throw ex;                 
             }
         }
@@ -109,10 +109,16 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Save();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "SaveChanges: Failed to save company.");
+            } catch (Exception ex) when(Log(ex, "SaveChanges: Failed to save company."))
+            {
                 throw ex;                
             }
-        }        
+        } 
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.Error(e, msg);
+            return true;
+        }               
     }
 }

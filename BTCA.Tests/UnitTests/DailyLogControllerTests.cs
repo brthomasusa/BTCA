@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,18 +27,18 @@ namespace BTCA.Tests.UnitTests
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
-        public void HttpGet_DailyLog_GetAll()
+        public void HttpGet_DailyLog_GetDailyLogsForDriver()
         {
             var drvID = 4;
 
-            _mockDailyLogMgr.Setup(mgr => mgr.GetDailyLogs(It.Is<int>(i => i == drvID)))
+            _mockDailyLogMgr.Setup(mgr => mgr.GetDailyLogsForDriver(It.Is<int>(i => i == drvID)))
                            .Returns(GetDailyLogModels().Where(m => m.DriverID == drvID).ToList());
 
             var controller = new DailyLogController(_mockDailyLogMgr.Object, _logger);
 
-            var result = controller.GetAll(drvID);
+            var result = controller.GetAllByDriver(drvID);
             Assert.IsType<OkObjectResult>(result);
-            _mockDailyLogMgr.Verify(m => m.GetDailyLogs(It.Is<int>(i => i == drvID)), Times.Once());
+            _mockDailyLogMgr.Verify(m => m.GetDailyLogsForDriver(It.Is<int>(i => i == drvID)), Times.Once());
 
             var okResult = (OkObjectResult)result;
             Assert.NotNull(okResult);
@@ -55,7 +54,7 @@ namespace BTCA.Tests.UnitTests
             var drvID = 4;
             var logDate = new DateTime(2016,9,7).Date;
             
-            _mockDailyLogMgr.Setup(mgr => mgr.GetDailyLog(It.IsAny<Expression<Func<DailyLogModel, bool>>>()))
+            _mockDailyLogMgr.Setup(mgr => mgr.GetDailyLog(It.IsAny<Func<DailyLogModel, bool>>()))
                            .Returns(GetDailyLogModels().Where(m => m.DriverID == drvID && m.LogDate == logDate).SingleOrDefault());
 
             var controller = new DailyLogController(_mockDailyLogMgr.Object, _logger);            

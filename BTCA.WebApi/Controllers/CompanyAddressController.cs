@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BTCA.DomainLayer.Managers.Interface;
-using BTCA.Common.Entities;
 using BTCA.Common.BusinessObjects;
 
 namespace BTCA.WebApi.Controllers
@@ -21,22 +20,36 @@ namespace BTCA.WebApi.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id}", Name = "GetAll")]
+        [HttpGet("{companyId}", Name = "GetByCompanyId")]
         [ProducesResponseType(typeof(IEnumerable<CompanyAddress>), 200)]
-        public IActionResult GetAll(int id) =>
-            Ok(_addressMgr.GetCompanyAddresses(id)); 
+        public IActionResult GetAll() =>
+            Ok(_addressMgr.GetAll()); 
+
+        [HttpGet("{companyId}", Name = "GetByCompanyId")]
+        [ProducesResponseType(typeof(IEnumerable<CompanyAddress>), 200)]
+        [ProducesResponseType(404)]
+        public IActionResult GetByCompanyId(int companyId)
+        {
+            var addresses = _addressMgr.GetCompanyAddresses(companyId);
+            if (addresses == null)
+            {
+                return NotFound($"No addresses with companyId: {companyId} found.");
+            }
+            return Ok(addresses); 
+        }
+            
 
 
-        [HttpGet("{id}", Name = "GetById")]
+        [HttpGet("{addressId}", Name = "GetByAddressId")]
         [ProducesResponseType(typeof(CompanyAddress), 200)]
         [ProducesResponseType(404)]
-        public IActionResult GetById(int id)
+        public IActionResult GetByAddressId(int addressId)
         {
-            var address = _addressMgr.GetCompanyAddress(id);
+            var address = _addressMgr.GetCompanyAddress(addressId);
             if (address == null)
             { 
-                _logger.LogInformation("Unable to retrieve address with addressId: {0}", id);
-                return NotFound($"No address with addressId: {id} found.");
+                _logger.LogInformation("Unable to retrieve address with addressId: {0}", addressId);
+                return NotFound($"No address with addressId: {addressId} found.");
             }
 
             return Ok(address);
@@ -57,7 +70,7 @@ namespace BTCA.WebApi.Controllers
 
                 _addressMgr.Create(address);
                 _addressMgr.SaveChanges();
-                return CreatedAtRoute("GetById", new {id = address.ID}, address);
+                return CreatedAtRoute("GetByAddressId", new {id = address.ID}, address);
 
             } catch (Exception ex) {
                 _logger.LogError(ex, "HttpPost: create company address failed");
@@ -65,17 +78,17 @@ namespace BTCA.WebApi.Controllers
             }            
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{addressId}")]
         [ProducesResponseType(204)]       
         [ProducesResponseType(400)]        
-        public IActionResult Update(int id, [FromBody] CompanyAddress address)
+        public IActionResult Update(int addressId, [FromBody] CompanyAddress address)
         {
             try {
 
-                if (address == null || address.ID != id)
+                if (address == null || address.ID != addressId)
                 {
-                    _logger.LogInformation("Update company address failed for ID: {0}", id);
-                    return BadRequest($"Invalid address ID: {id}");
+                    _logger.LogInformation("Update company address failed for ID: {0}", addressId);
+                    return BadRequest($"Invalid address ID: {addressId}");
                 }
 
                 if (!ModelState.IsValid)
@@ -94,23 +107,20 @@ namespace BTCA.WebApi.Controllers
             }            
         } 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{addressId}")]
         [ProducesResponseType(204)]       
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]        
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int addressId)
         {
             try {
                 
-                /// TODO Fix _addressMgr.GetCompanyAddress(add => add.ID == id)
-                //var toBeDeleted = _addressMgr.GetCompanyAddress(add => add.ID == id);
-                
-                var toBeDeleted = _addressMgr.GetCompanyAddress(id);
+                var toBeDeleted = _addressMgr.GetCompanyAddress(addressId);
 
                 if (toBeDeleted == null)
                 {
-                    _logger.LogInformation($"Delete company address failed. No address with Id: {id} found.");
-                    return NotFound($"Delete company address failed. No address with Id: {id} found.");
+                    _logger.LogInformation($"Delete company address failed. No address with Id: {addressId} found.");
+                    return NotFound($"Delete company address failed. No address with Id: {addressId} found.");
                 }
 
                 _addressMgr.Delete(toBeDeleted);

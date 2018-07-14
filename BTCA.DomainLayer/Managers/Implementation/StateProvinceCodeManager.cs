@@ -22,33 +22,33 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return _repository.All<StateProvinceCode>();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetAll: Failed to retrieve StateProvinceCodes");
+            } catch (Exception ex) when(Log(ex, "GetAll: Failed to retrieve StateProvinceCodes"))
+            {
                 throw ex;                
             }
                   
         }
 
-        public IEnumerable<StateProvinceCode> GetStateProvinceCodes(Expression<Func<StateProvinceCode, bool>> expression)
+        public IEnumerable<StateProvinceCode> GetStateProvinceCodes(Func<StateProvinceCode, bool> expression)
         {
             try {
 
                 return _repository.Filter<StateProvinceCode>(expression);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetStateProvinceCodes: Operation failed using expression {0}", expression);
+            } catch (Exception ex) when(Log(ex, $"GetStateProvinceCodes: Operation failed using expression {expression}"))
+            {
                 throw ex; 
             }            
         }
 
-        public StateProvinceCode GetStateProvinceCode(Expression<Func<StateProvinceCode, bool>> expression)
+        public StateProvinceCode GetStateProvinceCode(Func<StateProvinceCode, bool> expression)
         {            
             try {
 
                 return _repository.Find<StateProvinceCode>(expression);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetStateProvinceCode: Operation failed using expression {0}", expression);
+            } catch (Exception ex) when(Log(ex, $"GetStateProvinceCode: Operation failed using expression {expression}"))
+            {
                 throw ex; 
             }            
         }
@@ -64,8 +64,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 
                 _logger.Info("Record saved for {0}", this.GetType());
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Create: Create failed for StateProvinceCode");
+            } catch (Exception ex) when(Log(ex, "Create: Create failed for StateProvinceCode"))
+            {
                 throw ex;
             }
         }
@@ -79,8 +79,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Update<StateProvinceCode>(stateCode);
                 _logger.Info("Record saved for {0}", this.GetType());
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Update: Update failed for StateProvinceCode with ID: {0}", ((StateProvinceCode)entity).ID);
+            } catch (Exception ex) when(Log(ex, $"Update: Update failed for StateProvinceCode with ID: {((StateProvinceCode)entity).ID}"))
+            {
                 throw ex;                
             }
         }
@@ -94,8 +94,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                 _repository.Delete<StateProvinceCode>(stateCode);
                 _logger.Info("Record deleted for {0}", this.GetType());
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "Delete: Delete failed for StateProvinceCode with ID: {0}", ((StateProvinceCode)entity).ID);
+            } catch (Exception ex) when(Log(ex, $"Delete: Delete failed for StateProvinceCode with ID: {((StateProvinceCode)entity).ID}"))
+            {
                 throw ex;                  
             }
         }
@@ -106,10 +106,16 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 _repository.Save();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "SaveChanges: Failed to save entity to the database.");
+            } catch (Exception ex) when(Log(ex, "SaveChanges: Failed to save entity to the database."))
+            {
                 throw ex; 
             }            
-        }         
+        }
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.Error(e, msg);
+            return true;
+        }                 
     }
 }

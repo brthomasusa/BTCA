@@ -145,7 +145,7 @@ namespace BTCA.Tests.IntegrationTests
             IDailyLogManager logMgr = new DailyLogManager(_repository);
 
             int driverId = 4;
-            var dailyLogs = logMgr.GetDailyLogs(driverId); 
+            var dailyLogs = logMgr.GetDailyLogsForDriver(driverId); 
 
             Assert.NotEmpty(dailyLogs);
             Assert.True(dailyLogs.Count() > 0);             

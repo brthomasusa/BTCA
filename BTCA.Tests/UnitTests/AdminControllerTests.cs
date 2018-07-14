@@ -52,7 +52,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void Index_Returns_ViewResult_Company_GetById()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );
@@ -119,7 +119,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPut_Company_Update()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );
@@ -138,7 +138,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPut_Company_UpdateWithInvalidCompanyID()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );
@@ -162,7 +162,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPost_Company_UpdateWithInvalidModelState()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );
@@ -184,7 +184,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPost_Company_UpdateWithNullCompany()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );
@@ -206,7 +206,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpDelete_Company_Delete()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );
@@ -228,7 +228,7 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpDelete_Company_Delete_InvalidCompanyID()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Expression<Func<Company, bool>>>()))
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
                             GetCompanies().Where(expression).SingleOrDefault()
                            );

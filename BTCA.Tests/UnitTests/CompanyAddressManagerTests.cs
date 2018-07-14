@@ -2,19 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Moq;
 using BTCA.Common.Entities;
 using BTCA.Common.BusinessObjects;
 using BTCA.DomainLayer.Managers.Implementation;
 using BTCA.DataAccess.Core;
-using BTCA.DataAccess.EF;
-using BTCA.DataAccess.Initializers;
 
 namespace BTCA.Tests.UnitTests
 {
-    public class CompanyAddressManagerTests
+    public class CompanyAddressManagerTests : BaseTestClass
     {
         [Fact]
         [Trait("Category", "UnitTest.CompanyAddressManager")]
@@ -34,31 +31,30 @@ namespace BTCA.Tests.UnitTests
 
         [Fact]
         [Trait("Category", "UnitTest.CompanyAddressManager")]
+        public void CompanyAddressManager_GetCompanyAddresses_ByExpression()
+        {
+            var mockRepo = new Mock<IRepository>();         
+            mockRepo.Setup(repo => repo.FilterQuery<CompanyAddress>( It.IsAny<Func<CompanyAddress, bool>>() ))                                        
+                                       .Returns(GetCompanyAddresses());
+
+            var companyAddressMgr = new CompanyAddressManager(mockRepo.Object);
+            var result = companyAddressMgr.GetCompanyAddresses(ca => ((CompanyAddress)ca).CompanyId == 2); 
+
+            mockRepo.Verify(repo => repo.FilterQuery<CompanyAddress>(It.IsAny<Func<CompanyAddress, bool>>()), Times.Once());
+        }
+
+        [Fact]
+        [Trait("Category", "UnitTest.CompanyAddressManager")]
         public void CompanyAddressManager_GetCompanyAddress_ByExpression()
         {
-            var data = GetCompanyAddresses();
+            var mockRepo = new Mock<IRepository>();         
+            mockRepo.Setup(repo => repo.FindQuery<CompanyAddress>( It.IsAny<Func<CompanyAddress, bool>>() ))                                        
+                                       .Returns(GetOneCompanyAddress());
 
-            var mockRepo = new Mock<IRepository>();
+            var companyAddressMgr = new CompanyAddressManager(mockRepo.Object);
+            var result = companyAddressMgr.GetCompanyAddress(ca => ((CompanyAddress)ca).AddressLine1 == "1346 Markum Ranch Rd"); 
 
-            /*
-                This does not work, Moq can not mock extension methods. So, AllQueryType<CompanyAddress>().Where causes
-                the following error: System.NotSupportedException : Invalid setup on an extension method
-            */
-
-            // mockRepo.Setup(repo => repo.AllQueryType<CompanyAddress>().Where(It.IsAny<Expression<Func<CompanyAddress, bool>>>()))                                        
-            //                             .Callback(
-            //                                 (Expression<Func<CompanyAddress, bool>> expression) => 
-            //                                     {
-            //                                         data = data.Where(expression);
-            //                                     }
-            //                             )
-            //                             .Returns(data);
-
-            // var companyAddressMgr = new CompanyAddressManager(mockRepo.Object);
-            // var result = companyAddressMgr.GetCompanyAddress(ca => ((CompanyAddress)ca).AddressLine1 == "1346 Markum Ranch Rd"); 
-
-            // mockRepo.Verify(repo => repo.AllQueryType<CompanyAddress>().Where(It.IsAny<Expression<Func<CompanyAddress, bool>>>()), Times.Once());
-            // Assert.Equal("1346 Markum Ranch Rd", result.AddressLine1); 
+            mockRepo.Verify(repo => repo.FindQuery<CompanyAddress>(It.IsAny<Func<CompanyAddress, bool>>()), Times.Once());
         }
 
         [Fact]

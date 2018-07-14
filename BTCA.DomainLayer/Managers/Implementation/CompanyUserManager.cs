@@ -51,8 +51,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                         .ThenBy(user => user.LastName)
                                         .ThenBy(user => user.FirstName);                
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetAll: Retrieval of all company users failed");
+            } catch (Exception ex) when(Log(ex, "GetAll: Retrieval of all company users failed"))
+            {
                 throw ex;                
             }
         }
@@ -85,8 +85,8 @@ namespace BTCA.DomainLayer.Managers.Implementation
                                         .ThenBy(user => user.LastName)
                                         .ThenBy(user => user.FirstName);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyUsers: Retrieval of users with company Id {CompanyId} failed", companyId);
+            } catch (Exception ex) when(Log(ex, $"GetCompanyUsers: Retrieval of users with company Id {companyId} failed"))
+            {
                 throw ex;
             }
         }
@@ -117,13 +117,13 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return companyUser.SingleOrDefault();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyUser: Retrieval of user with company Id: {CompanyId} and user Id {1} failed", companyId, userId);
+            } catch (Exception ex) when(Log(ex, $"GetCompanyUser: Retrieval of user with company Id: {companyId} and user Id {userId} failed"))
+            {
                 throw ex;                
             }
         }
 
-        public CompanyUser GetCompanyUser(Expression<Func<AppUser, bool>> expression)
+        public CompanyUser GetCompanyUser(Func<AppUser, bool> expression)
         {            
             try {
 
@@ -149,10 +149,16 @@ namespace BTCA.DomainLayer.Managers.Implementation
 
                 return companyUser.SingleOrDefault();
 
-            } catch (Exception ex) {
-                _logger.Error(ex, "GetCompanyUser: Retrieval of user failed");
+            } catch (Exception ex) when(Log(ex, "GetCompanyUser: Retrieval of user failed"))
+            {
                 throw ex;                
             }            
-        }           
+        }
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.Error(e, msg);
+            return true;
+        }                   
     }
 }

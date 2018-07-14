@@ -20,7 +20,7 @@ namespace BTCA.Tests.UnitTests
             var data = GetCompanies();
 
             var mockRepo = new Mock<IRepository>();
-            mockRepo.Setup(repo => repo.Filter<Company>(It.IsAny<Expression<Func<Company, bool>>>()))
+            mockRepo.Setup(repo => repo.Filter<Company>(It.IsAny<Func<Company, bool>>()))
                                         .Returns(data)
                                         .Callback(
                                             (Expression<Func<Company, bool>> expression) => 
@@ -32,7 +32,7 @@ namespace BTCA.Tests.UnitTests
             var companyMgr = new CompanyManager(mockRepo.Object);
             var result = companyMgr.GetCompanies(c => c.CompanyCode.Contains("SWIFT")); 
 
-            mockRepo.Verify(repo => repo.Filter<Company>(It.IsAny<Expression<Func<Company, bool>>>()), Times.Once());
+            mockRepo.Verify(repo => repo.Filter<Company>(It.IsAny<Func<Company, bool>>()), Times.Once());
 
             var results = data.ToList().OrderBy(c => c.CompanyName);
             Assert.Equal(2, results.Count());
@@ -66,7 +66,7 @@ namespace BTCA.Tests.UnitTests
             var data = GetCompanies();
 
             var mockRepo = new Mock<IRepository>();
-            mockRepo.Setup(repo => repo.Find<Company>(It.IsAny<Expression<Func<Company, bool>>>()))                                        
+            mockRepo.Setup(repo => repo.Find<Company>(It.IsAny<Func<Company, bool>>()))                                        
                                         .Returns((Expression<Func<Company, bool>> expression) => 
                                         {
                                             var query = data.Where(expression);
@@ -85,7 +85,7 @@ namespace BTCA.Tests.UnitTests
             var companyMgr = new CompanyManager(mockRepo.Object);
             var result = companyMgr.GetCompany(c => c.CompanyCode == "GWLS001"); 
 
-            mockRepo.Verify(repo => repo.Find<Company>(It.IsAny<Expression<Func<Company, bool>>>()), Times.Once());
+            mockRepo.Verify(repo => repo.Find<Company>(It.IsAny<Func<Company, bool>>()), Times.Once());
             Assert.Equal("Greatwide Logistics Services", result.CompanyName);
         }
 

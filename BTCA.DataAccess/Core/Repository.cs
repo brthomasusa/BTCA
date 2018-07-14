@@ -21,24 +21,50 @@ namespace BTCA.DataAccess.Core
             return _context.Set<T>().AsQueryable();
         }
 
-        /* 
-            AllQueryType can only with types defined in DbContext
-            using the DbQuery<TQueryType> construct.
-        */
         public virtual IQueryable<T> AllQueryType<T>() where T : class
         {
             return _context.Query<T>().AsQueryable();
         }
 
-        public virtual IEnumerable<T> Filter<T>(Expression<Func<T, bool>> predicate) where T : class
+        // This method can not be unit tested; that would require that
+        // _context.Set<T>().Where<T>() be mocked. Doing so, results in the following
+        // error: System.NotSupportedException : Invalid setup on an extension method: ...
+        // Moq can not mock extension methods!!
+        // Testing for this is done solely through integration testing.
+        public virtual IEnumerable<T> Filter<T>(Func<T, bool> predicate) where T : class
         {            
             return _context.Set<T>().Where<T>(predicate).AsEnumerable<T>();
         }
 
-        public virtual T Find<T>(Expression<Func<T, bool>> predicate) where T : class
-        {
-            return _context.Set<T>().FirstOrDefault<T>(predicate);
+        // This method can not be unit tested; that would require that
+        // _context.Query<T>().Where<T>() be mocked. Doing so, results in the following
+        // error: System.NotSupportedException : Invalid setup on an extension method: ...
+        // Moq can not mock extension methods!!
+        // Testing for this is done solely through integration testing.
+        public virtual IEnumerable<T> FilterQuery<T>(Func<T, bool> predicate) where T : class
+        {            
+            return _context.Query<T>().Where<T>(predicate).AsEnumerable<T>();
         }
+
+        // This method can not be unit tested; that would require that
+        // _context.Set<T>().FirstOrDefault<T>() be mocked. Doing so, results in the following
+        // error: System.NotSupportedException : Invalid setup on an extension method: ...
+        // Moq can not mock extension methods!!
+        // Testing for this is done solely through integration testing.
+        public virtual T Find<T>(Func<T, bool> predicate) where T : class
+        {
+            return _context.Set<T>().SingleOrDefault<T>(predicate);
+        }
+
+        // This method can not be unit tested; that would require that
+        // _context.Query<T>().FirstOrDefault<T>() be mocked. Doing so, results in the following
+        // error: System.NotSupportedException : Invalid setup on an extension method: ...
+        // Moq can not mock extension methods!!
+        // Testing for this is done solely through integration testing.
+        public virtual T FindQuery<T>(Func<T, bool> predicate) where T : class
+        {
+            return _context.Query<T>().FirstOrDefault<T>(predicate);
+        }        
 
         public virtual void Create<T>(T TObject) where T : class
         {
@@ -57,20 +83,20 @@ namespace BTCA.DataAccess.Core
                 _context.Set<T>().Attach(TObject);
                 _context.SetModified(TObject);
             }
-            catch (Exception ex) {
-                _logger.Error(ex, ex.Message);
+            catch (Exception ex) when(Log(ex, ex.Message))
+            {
                 throw ex;
             }
         }
 
-        public virtual void Delete<T>(Expression<Func<T, bool>> predicate) where T : class
+        public virtual void Delete<T>(Func<T, bool> predicate) where T : class
         {
             var objects = Filter<T>(predicate);
             foreach (var obj in objects)
                 _context.Set<T>().Remove(obj);
         }
 
-        public virtual bool Contains<T>(Expression<Func<T, bool>> predicate) where T : class
+        public virtual bool Contains<T>(Func<T, bool> predicate) where T : class
         {
             return _context.Set<T>().Count<T>(predicate) > 0;
         }
@@ -81,8 +107,8 @@ namespace BTCA.DataAccess.Core
 
                 _context.Database.ExecuteSqlCommand(procedureCommand, sqlParams);
 
-            } catch (Exception ex) {
-                _logger.Error(ex, ex.Message);
+            } catch (Exception ex) when(Log(ex, ex.Message))
+            {
                 throw ex;
             }            
         } 
@@ -93,8 +119,8 @@ namespace BTCA.DataAccess.Core
 
                 _context.SaveChanges();
             
-            } catch (Exception ex) {
-                _logger.Error(ex, ex.Message);
+            } catch (Exception ex)  when(Log(ex, ex.Message))
+            {
                 throw ex;
             }
                          
@@ -104,6 +130,11 @@ namespace BTCA.DataAccess.Core
         {
             get { return _context; }
         } 
-             
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.Error(e, msg);
+            return true;
+        }
     }
 }
