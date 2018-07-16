@@ -72,9 +72,9 @@ namespace BTCA.WebApi.Controllers
                 _addressMgr.SaveChanges();
                 return CreatedAtRoute("GetByAddressId", new {id = address.ID}, address);
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPost: create company address failed");
-                return BadRequest(ex.Message); 
+            } catch (Exception ex) when(Log(ex, "HttpPost: create company address failed"))
+            {
+                return new StatusCodeResult(500); 
             }            
         }
 
@@ -101,9 +101,9 @@ namespace BTCA.WebApi.Controllers
 
                 return NoContent();
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPut: update company address failed");
-                return BadRequest(ex.Message); 
+            } catch (Exception ex) when(Log(ex, "HttpPut: update company address failed"))
+            {
+                return new StatusCodeResult(500);
             }            
         } 
 
@@ -127,10 +127,16 @@ namespace BTCA.WebApi.Controllers
                 _addressMgr.SaveChanges();
                 return NoContent();
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpDelete: delete company address failed");
-                return BadRequest(ex.Message); 
+            } catch (Exception ex) when(Log(ex, "HttpDelete: delete company address failed"))
+            {
+                return new StatusCodeResult(500);
             }                        
-        }                                         
+        }
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.LogError(e, msg);
+            return true;
+        }                                                 
     }
 }

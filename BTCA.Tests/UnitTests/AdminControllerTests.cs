@@ -52,35 +52,35 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void Index_Returns_ViewResult_Company_GetById()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
-                           .Returns((Expression<Func<Company, bool>> expression) => 
-                            GetCompanies().Where(expression).SingleOrDefault()
-                           );
+            var company = GetOneCompany();
+            
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>())).Returns(company);
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger); 
 
-            var result = controller.GetById(1);
+            var result = controller.GetById(company.ID);
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result); 
             
             var okResult = (OkObjectResult)result;
 
-            var company = (Company)okResult.Value;
-            Assert.NotNull(company);
-            Assert.Equal(1, company.ID);                     
+            var test = (Company)okResult.Value;
+            Assert.NotNull(test);
+            Assert.Equal(company.ID, test.ID);                     
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPost_Company_Create()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.Create(It.IsAny<Company>()));
+            var company = GetOneCompany();
+            _mockCompanyMgr.Setup(mgr => mgr.Create(It.Is<Company>(i => i == company)));
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger); 
 
-            var result = controller.Create(GetOneCompany());
+            var result = controller.Create(company);
 
-            _mockCompanyMgr.Verify(m => m.Create(It.IsAny<Company>()), Times.Once());
+            _mockCompanyMgr.Verify(m => m.Create(It.Is<Company>(i => i == company)), Times.Once());
             _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Once());            
             Assert.IsType<CreatedAtRouteResult>(result);          
         }
@@ -92,8 +92,10 @@ namespace BTCA.Tests.UnitTests
             _mockCompanyMgr.Setup(mgr => mgr.Create(It.IsAny<Company>()));
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger); 
-
             var result = controller.Create(null);
+            
+            _mockCompanyMgr.Verify(m => m.Create(It.IsAny<Company>()), Times.Never());
+            _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Never());            
             Assert.IsType<BadRequestObjectResult>(result);          
         }        
 
@@ -101,17 +103,17 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPost_Company_Create_WithInvalidModelState()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.Create(It.IsAny<Company>()));
+            var company = GetOneCompany();
+            company.CompanyCode = null;
+
+            _mockCompanyMgr.Setup(mgr => mgr.Create(It.Is<Company>(i => i == company)));
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger);
-            controller.ModelState.AddModelError("CompanyCode", "Required"); 
-            controller.ModelState.AddModelError("CompanyName", "Required");
-
-            var company = new Company {
-                CompanyCode = null,
-                CompanyName = null
-            };
+            controller.ModelState.AddModelError("CompanyCode", "Required");
             var result = controller.Create(company);
+
+            _mockCompanyMgr.Verify(m => m.Create(It.Is<Company>(i => i == company)), Times.Never());
+            _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Never()); 
             Assert.IsType<BadRequestObjectResult>(result);          
         } 
 
@@ -119,70 +121,61 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPut_Company_Update()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
-                           .Returns((Expression<Func<Company, bool>> expression) => 
-                            GetCompanies().Where(expression).SingleOrDefault()
-                           );
-            _mockCompanyMgr.Setup(mgr => mgr.Update(It.IsAny<Company>()));
+            var company = GetOneCompany();
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>())).Returns(company);
+            _mockCompanyMgr.Setup(mgr => mgr.Update(It.Is<Company>(i => i == company)));
             _mockCompanyMgr.Setup(mgr => mgr.SaveChanges());
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger); 
-            var result = controller.Update(GetOneCompany().ID, GetOneCompany());
+            var result = controller.Update(company.ID, company);
 
-            _mockCompanyMgr.Verify(m => m.Update(It.IsAny<Company>()), Times.Once());
+            _mockCompanyMgr.Verify(m => m.Update(It.Is<Company>(i => i == company)), Times.Once());
             _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Once()); 
-            Assert.IsType<NoContentResult>(result);   // NotFoundObjectResult       
+            Assert.IsType<NoContentResult>(result);        
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpPut_Company_UpdateWithInvalidCompanyID()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
-                           .Returns((Expression<Func<Company, bool>> expression) => 
-                            GetCompanies().Where(expression).SingleOrDefault()
-                           );
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()));
             _mockCompanyMgr.Setup(mgr => mgr.Update(It.IsAny<Company>()));
             _mockCompanyMgr.Setup(mgr => mgr.SaveChanges());
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger);
 
-            var company = new Company {
-                ID = 22,
-                CompanyCode = null,
-                CompanyName = null
-            };
+            var company = GetOneCompany();
 
-            var result = controller.Update(GetOneCompany().ID, company);
+            var result = controller.Update(-1, company);
 
-            Assert.IsType<BadRequestObjectResult>(result);   // NotFoundObjectResult       
+            _mockCompanyMgr.Verify(m => m.Update(It.IsAny<Company>()), Times.Never());
+            _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Never()); 
+            Assert.IsType<BadRequestObjectResult>(result);       
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
-        public void HttpPost_Company_UpdateWithInvalidModelState()
+        public void HttpPut_Company_UpdateWithInvalidModelState()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
-                           .Returns((Expression<Func<Company, bool>> expression) => 
-                            GetCompanies().Where(expression).SingleOrDefault()
-                           );
+            var company = GetOneCompany();
+            company.CompanyCode = null;
+
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>())).Returns(company);
             _mockCompanyMgr.Setup(mgr => mgr.Update(It.IsAny<Company>()));
             _mockCompanyMgr.Setup(mgr => mgr.SaveChanges());
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger);
             controller.ModelState.AddModelError("CompanyCode", "Required"); 
-
-            var company = GetOneCompany();
-            company.CompanyCode = null;
-
             var result = controller.Update(company.ID, company);
 
+            _mockCompanyMgr.Verify(m => m.Update(It.IsAny<Company>()), Times.Never());
+            _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Never()); 
             Assert.IsType<BadRequestObjectResult>(result);   // NotFoundObjectResult       
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
-        public void HttpPost_Company_UpdateWithNullCompany()
+        public void HttpPut_Company_UpdateWithNullCompany()
         {
             _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
                            .Returns((Expression<Func<Company, bool>> expression) => 
@@ -206,44 +199,37 @@ namespace BTCA.Tests.UnitTests
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpDelete_Company_Delete()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
-                           .Returns((Expression<Func<Company, bool>> expression) => 
-                            GetCompanies().Where(expression).SingleOrDefault()
-                           );
-            _mockCompanyMgr.Setup(mgr => mgr.Delete(It.IsAny<Company>()));
+            var company = GetOneCompany();
+
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>())).Returns(company);
+            _mockCompanyMgr.Setup(mgr => mgr.Delete(It.Is<Company>(i => i == company)));
             _mockCompanyMgr.Setup(mgr => mgr.SaveChanges());
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger);
 
-            var company = GetOneCompany();
-
             var result = controller.Delete(company.ID);
 
-            _mockCompanyMgr.Verify(m => m.Delete(It.IsAny<Company>()), Times.Once());
+            _mockCompanyMgr.Verify(m => m.Delete(It.Is<Company>(i => i == company)), Times.Once());
             _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Once()); 
-            Assert.IsType<NoContentResult>(result);   // NotFoundObjectResult       
+            Assert.IsType<NoContentResult>(result);       
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void HttpDelete_Company_Delete_InvalidCompanyID()
         {
-            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()))
-                           .Returns((Expression<Func<Company, bool>> expression) => 
-                            GetCompanies().Where(expression).SingleOrDefault()
-                           );
-            _mockCompanyMgr.Setup(mgr => mgr.Delete(It.IsAny<Company>()));
+            var company = GetOneCompany();
+            company.ID = 1111;
+            _mockCompanyMgr.Setup(mgr => mgr.GetCompany(It.IsAny<Func<Company, bool>>()));
+            _mockCompanyMgr.Setup(mgr => mgr.Delete(It.Is<Company>(i => i == company)));
             _mockCompanyMgr.Setup(mgr => mgr.SaveChanges());
 
             var controller = new AdminController(_mockCompanyMgr.Object, _logger);
+            var result = controller.Delete(company.ID);
 
-            var company = GetOneCompany();
-
-            var result = controller.Delete(1111);
-
-            _mockCompanyMgr.Verify(m => m.Delete(It.IsAny<Company>()), Times.Never());
+            _mockCompanyMgr.Verify(m => m.Delete(It.Is<Company>(i => i == company)), Times.Never());
             _mockCompanyMgr.Verify(m => m.SaveChanges(), Times.Never()); 
-            Assert.IsType<NotFoundObjectResult>(result);   // NotFoundObjectResult       
+            Assert.IsType<NotFoundObjectResult>(result);       
         }
 
         private IQueryable<Company> GetCompanies()

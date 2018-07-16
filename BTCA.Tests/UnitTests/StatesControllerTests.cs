@@ -46,25 +46,32 @@ namespace BTCA.Tests.UnitTests
         public void Index_Returns_ViewResult_StateCode_GetById()
         {
             _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(It.IsAny<Func<StateProvinceCode, bool>>()))
-                             .Returns( () =>
-                                  GetTestStateProvinceCodes().Where(code => code.ID == 1)
-                                                             .SingleOrDefault()
-                             );
+                             .Returns( GetTestStateProvinceCode(1) );
 
             var controller = new StatesController(_mockStateCodeMgr.Object, _logger); 
-
             var result = controller.GetById(1);
-            Assert.IsType<OkObjectResult>(result);           
+
+            _mockStateCodeMgr.Verify(m => m.GetStateProvinceCode(It.IsAny<Func<StateProvinceCode,bool>>()), Times.Once());            
+            Assert.IsType<OkObjectResult>(result);  
+
+            var okResult = (OkObjectResult)result;
+
+            var test = (StateProvinceCode)okResult.Value;
+            Assert.NotNull(test);
+            Assert.Equal(1, test.ID);                     
         }
 
         [Fact]
         [Trait("Category", "UnitTest.WebApiControllers")]
         public void Index_Returns_ViewResult_StateCode_GetById_NotFound()       
         {
-            _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(code => code.ID == -1)).Returns(GetTestStateProvinceCode(-1));
+            _mockStateCodeMgr.Setup(mgr => mgr.GetStateProvinceCode(It.IsAny<Func<StateProvinceCode,bool>>()))
+                                              .Returns(GetTestStateProvinceCodes().Where(code => code.ID == -1).SingleOrDefault());
+
             var controller = new StatesController(_mockStateCodeMgr.Object, _logger); 
 
-            var result = controller.GetById(1);
+            var result = controller.GetById(-1);
+            _mockStateCodeMgr.Verify(m => m.GetStateProvinceCode(It.IsAny<Func<StateProvinceCode,bool>>()), Times.Once());
             Assert.IsType<NotFoundObjectResult>(result);            
         }
 

@@ -60,9 +60,9 @@ namespace BTCA.WebApi.Controllers
                 _companyMgr.SaveChanges();
                 return CreatedAtRoute("GetCompanyById", new { id = company.ID }, company);
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPost. Create company failed: {0}", company);
-                return BadRequest(ex.Message);
+            } catch (Exception ex) when(Log(ex, $"HttpPost. Create company failed: {company}"))
+            {
+                return new StatusCodeResult(500);
             }            
         }
 
@@ -98,9 +98,9 @@ namespace BTCA.WebApi.Controllers
                 _companyMgr.SaveChanges();
                 return NoContent();
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPut - Update company failed: {@Company}", company);
-                return BadRequest(ex.Message);
+            } catch (Exception ex) when(Log(ex, $"HttpPut - Update company failed: {company}"))
+            {
+                return new StatusCodeResult(500);
             }
         }
 
@@ -123,10 +123,16 @@ namespace BTCA.WebApi.Controllers
                 _companyMgr.SaveChanges();
                 return NoContent();
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpDelete: Delete company with company Id {CompanyId} failed", id);
-                return BadRequest(ex.Message);
+            } catch (Exception ex) when(Log(ex, $"HttpDelete: Delete company with company Id {id} failed"))
+            {
+                return new StatusCodeResult(500);
             }                        
+        }
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.LogError(e, msg);
+            return true;
         }               
     }
 }

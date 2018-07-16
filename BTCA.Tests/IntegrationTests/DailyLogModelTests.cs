@@ -30,7 +30,7 @@ namespace BTCA.Tests.IntegrationTests
     public class DailyLogTests : IClassFixture<DailyLogTestsFixture>
     {
         private IRepository _repository;
-        private IDailyLogManager _dailyLogMgr;
+        //private IDailyLogManager _dailyLogMgr;
         private DailyLogTestsFixture _fixture;
 
         public DailyLogTests(DailyLogTestsFixture fixture)

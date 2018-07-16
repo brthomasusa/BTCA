@@ -31,7 +31,7 @@ namespace BTCA.WebApi.Controllers
             Ok(_logMgr.GetDailyLogsForDriver(driverId));
 
         [HttpGet("{driverId}/{logDate}")]
-        [ProducesResponseType(typeof(IEnumerable<DailyLogModel>), 200)]
+        [ProducesResponseType(typeof(DailyLogModel), 200)]
         [ProducesResponseType(404)]
         public IActionResult GetForDriverAndDate(int driverId, DateTime logDate)
         {
@@ -76,7 +76,7 @@ namespace BTCA.WebApi.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(CompanyAddress), 201)]
+        [ProducesResponseType(typeof(DailyLogModel), 201)]
         [ProducesResponseType(400)]        
         public IActionResult Create([FromBody] DailyLogModel dailyLog)
         {
@@ -92,9 +92,9 @@ namespace BTCA.WebApi.Controllers
                 _logMgr.SaveChanges();
                 return CreatedAtRoute("GetByLogId", new {logId = dailyLog.LogID}, dailyLog);
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPost: create company address failed");
-                return BadRequest(ex.Message); 
+            } catch (Exception ex) when(Log(ex, "HttpPost: create company address failed"))
+            {
+                return new StatusCodeResult(500);
             }            
         }
 
@@ -122,9 +122,9 @@ namespace BTCA.WebApi.Controllers
 
                 return NoContent();
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpPut: update daily log failed");
-                return BadRequest(ex.Message); 
+            } catch (Exception ex) when(Log(ex, "HttpPut: update daily log failed"))
+            {
+                return new StatusCodeResult(500); 
             }            
         } 
 
@@ -148,10 +148,16 @@ namespace BTCA.WebApi.Controllers
                 _logMgr.SaveChanges();
                 return NoContent();
 
-            } catch (Exception ex) {
-                _logger.LogError(ex, "HttpDelete: delete daily log failed");
-                return BadRequest(ex.Message); 
+            } catch (Exception ex) when(Log(ex, "HttpDelete: delete daily log failed"))
+            {
+                return new StatusCodeResult(500); 
             }                        
-        }                                                   
+        }    
+
+        private bool Log(Exception e, string msg)
+        {
+            _logger.LogError(e, msg);
+            return true;
+        }                                                       
     }
 }
