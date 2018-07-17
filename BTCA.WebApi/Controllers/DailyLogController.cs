@@ -77,7 +77,8 @@ namespace BTCA.WebApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(DailyLogModel), 201)]
-        [ProducesResponseType(400)]        
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]        
         public IActionResult Create([FromBody] DailyLogModel dailyLog)
         {
             try {
@@ -92,7 +93,7 @@ namespace BTCA.WebApi.Controllers
                 _logMgr.SaveChanges();
                 return CreatedAtRoute("GetByLogId", new {logId = dailyLog.LogID}, dailyLog);
 
-            } catch (Exception ex) when(Log(ex, "HttpPost: create company address failed"))
+            } catch (Exception ex) when(Log(ex, "HttpPost: create daily log failed"))
             {
                 return new StatusCodeResult(500);
             }            
@@ -101,6 +102,7 @@ namespace BTCA.WebApi.Controllers
         [HttpPut("{logId}")]
         [ProducesResponseType(204)]       
         [ProducesResponseType(400)]        
+        [ProducesResponseType(500)]
         public IActionResult Update(int logId, [FromBody] DailyLogModel dailyLog)
         {
             try {
@@ -129,9 +131,9 @@ namespace BTCA.WebApi.Controllers
         } 
 
         [HttpDelete("{logId}")]
-        [ProducesResponseType(204)]       
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]        
+        [ProducesResponseType(204)]               
+        [ProducesResponseType(404)]       
+        [ProducesResponseType(500)] 
         public IActionResult Delete(int logId)
         {
             try {
