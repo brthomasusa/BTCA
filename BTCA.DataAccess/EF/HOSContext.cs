@@ -31,6 +31,7 @@ namespace BTCA.DataAccess.EF
         public virtual DbSet<LoadAssignment> LoadAssignments { get; set; }
         public virtual DbSet<DailyLog> DailyLogs { get; set; }
         public virtual DbSet<DailyLogDetail> DailyLogDetails { get; set; }
+        public virtual DbSet<AppSetting> AppSettings { get; set; }
 
         public virtual DbQuery<CompanyAddress> CompanyAddresses { get; set; }
         public virtual DbQuery<DailyLogModel> DailyLogModels { get; set; }
